@@ -1,0 +1,17 @@
+*.jar filter=lfs diff=lfs merge=lfs -text
+android/gradle/wrapper/caches/modules-2/files-2.1/org.robolectric/nativeruntime-dist-compat/1.0.1/4679d96261a18dc8012977915431de6243d3d7af/nativeruntime-dist-compat-1.0.1.jar filter=lfs diff=lfs merge=lfs -text
+android/gradle/wrapper/caches/modules-2/files-2.1/org.jetbrains.kotlin/kotlin-compiler-embeddable/1.7.22/1a39d9a56c9d1618300cd3444f070a5399663403/kotlin-compiler-embeddable-1.7.22.jar filter=lfs diff=lfs merge=lfs -text
+android/gradle/wrapper/caches/modules-2/files-2.1/org.jetbrains.kotlin/kotlin-compiler-embeddable/1.8.0/eb9118d4bcceaa2a94b2ae2a33a4ddba7c9a947f/kotlin-compiler-embeddable-1.8.0.jar filter=lfs diff=lfs merge=lfs -text
+android/gradle/wrapper/caches/modules-2/files-2.1/org.jetbrains.kotlin/kotlin-compiler-embeddable/1.7.10/909803167c98606fcf22b4c848647c68e351d48d/kotlin-compiler-embeddable-1.7.10.jar filter=lfs diff=lfs merge=lfs -text
+android/gradle/wrapper/caches/modules-2/files-2.1/io.flutter/arm64_v8a_debug/1.0.0-55eae6864b296dd9f43b2cc7577ec256e5c32a8d/e752abfded5057187aaa5973bade30251822f1cf/arm64_v8a_debug-1.0.0-55eae6864b296dd9f43b2cc7577ec256e5c32a8d.jar filter=lfs diff=lfs merge=lfs -text
+android/gradle/wrapper/caches/7.5/generated-gradle-jars/gradle-api-7.5.jar filter=lfs diff=lfs merge=lfs -text
+android/gradle/wrapper/caches/transforms-3/b6f6da2dcab09f721feeb815c3c8a9e2/transformed/jetified-arm64_v8a_debug-1.0.0-55eae6864b296dd9f43b2cc7577ec256e5c32a8d.jar filter=lfs diff=lfs merge=lfs -text
+android/gradle/wrapper/caches/transforms-3/e5f26d4b36dff44ac3968b8b82c46b8d/transformed/jetified-arm64_v8a_debug-1.0.0-55eae6864b296dd9f43b2cc7577ec256e5c32a8d.jar filter=lfs diff=lfs merge=lfs -text
+android/gradle/wrapper/caches/jars-9/d76012826e12ff3eb63ca104132c9f45/kotlin-compiler-embeddable-1.8.0.jar filter=lfs diff=lfs merge=lfs -text
+android/gradle/wrapper/caches/jars-9/787110314ac3b7c659c187baeed67aa1/util-8.jar filter=lfs diff=lfs merge=lfs -text
+android/gradle/wrapper/caches/jars-9/77701f0c3df41ced1359e993e00dcc83/gradle-api-impldep-8.4.jar filter=lfs diff=lfs merge=lfs -text
+android/gradle/wrapper/caches/jars-9/8c67bc99b2a1adf281c1aaa70d9f3d4e/kotlin-compiler-embeddable-1.7.22.jar filter=lfs diff=lfs merge=lfs -text
+android/gradle/wrapper/caches/jars-9/de874551b52843e5556b06230c45e0e7/kotlin-compiler-embeddable-1.7.10.jar filter=lfs diff=lfs merge=lfs -text
+android/gradle/wrapper/caches/jars-9/o_8560602a3c6b99a91765b01aaa95d057/gradle-api-impldep-8.4.jar filter=lfs diff=lfs merge=lfs -text
+android/gradle/wrapper/caches/jars-9/7548fcf62e7fadc75895ad77f3b2a2c2/kotlin-compiler-embeddable-1.6.21.jar filter=lfs diff=lfs merge=lfs -text
+android/gradle/wrapper/caches/jars-9/o_ed11450c74da0f2bfd54f85e822368a6/lib.jar filter=lfs diff=lfs merge=lfs -text

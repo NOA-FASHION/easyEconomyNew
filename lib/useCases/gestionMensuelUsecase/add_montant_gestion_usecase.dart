@@ -1,14 +1,16 @@
+import 'package:easyeconomy/models/easy_economy_models.dart';
+import 'package:easyeconomy/useCases/choix_desciption_details_finance_enum_usecase.dart';
 import 'package:easyeconomy/useCases/gestionMensuelUsecase/save_gestion_mensuel_usecase.dart';
 import 'package:intl/intl.dart';
 import 'package:injectable/injectable.dart';
-import 'package:easyeconomy/models/easy_economy_models.dart';
-
 
 @singleton
 class AddMontantGestionUseCase {
   final SaveGestionMensuelUseCase saveGestionMensuelUseCase;
-
-  AddMontantGestionUseCase(this.saveGestionMensuelUseCase);
+  final ChoixDesciptionDetailsFinanceEnumUseCase
+      choixDesciptionDetailsFinanceEnumUseCase;
+  AddMontantGestionUseCase(this.saveGestionMensuelUseCase,
+      this.choixDesciptionDetailsFinanceEnumUseCase);
 
   Future<void> execute({
     required int icones,
@@ -21,19 +23,21 @@ class AddMontantGestionUseCase {
     DateTime today = DateTime.now();
     for (var i = listGestionMensuel.length - 1; i >= 0; i--) {
       if (listGestionMensuel[i].mois == DateFormat('MMM').format(today)) {
-        listGestionMensuel[i].montantUniverselle.add(
-          MontantUniverselle(
-            unity: choixDesciptionEnum1(unity),
-            id: id,
-            montant: montant,
-            nom: nom,
-            descriptionUniverselle: [],
-            achat: [],
-            previsionsTotal: 0,
-            icones: icones,
-          ),
-        );
-        await saveGestionMensuelUseCase.execute(listGestionMensuel, false);
+        listGestionMensuel[i].montantUniverselle
+          .add(
+            MontantUniverselle(
+              unity: choixDesciptionDetailsFinanceEnumUseCase.execute(unity),
+              id: id,
+              montant: montant,
+              nom: nom,
+              descriptionUniverselle: [],
+              achat: [],
+              previsionsTotal: 0,
+              icones: icones,
+            ),
+          );
+        await saveGestionMensuelUseCase.execute(listGestionMensuel,
+            remove: false);
         return;
       }
     }

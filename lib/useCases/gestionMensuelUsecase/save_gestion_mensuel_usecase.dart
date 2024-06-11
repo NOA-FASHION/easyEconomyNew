@@ -12,8 +12,8 @@ class SaveGestionMensuelUseCase {
 
   SaveGestionMensuelUseCase(this.saveService);
 
-  Future<bool> execute(List<GestionMensuel> listGestionMensuel, bool? remove) async {
-    if (listGestionMensuel.length < 1 && remove!) {
+  Future<bool> execute(List<GestionMensuel> listGestionMensuel,{bool remove = false}) async {
+    if (listGestionMensuel.length < 1 && remove) {
       return saveService.saveData([]);
     }
     if (listGestionMensuel.isNotEmpty) {

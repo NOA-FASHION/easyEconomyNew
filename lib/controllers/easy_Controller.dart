@@ -2,9 +2,11 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:easyeconomy/controllers/list_gestion_mensuel_controller.dart';
+import 'package:easyeconomy/controllers/list_montant_universelle_controller.dart';
 import 'package:easyeconomy/models/easy_economy_models.dart';
+import 'package:easyeconomy/useCases/choix_desciption_details_finance_enum_usecase.dart';
+import 'package:easyeconomy/useCases/choix_description_enum_usecase.dart';
 import 'package:easyeconomy/useCases/gestionMensuelUsecase/add_montant_gestion_usecase.dart';
-import 'package:easyeconomy/useCases/gestionMensuelUsecase/load_gestion_mensuel_usecase.dart';
 import 'package:easyeconomy/useCases/gestionMensuelUsecase/remove_gestion_mensuel_usecase.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_document_picker/flutter_document_picker.dart';
@@ -31,6 +33,10 @@ class EasyController extends ChangeNotifier {
   final SharedPreferences _localData;
   final AddMontantGestionUseCase addMontantGestionUseCase;
   final RemoveGestionMensuelUseCase removeGestionMensuelUseCase;
+  final ListMontantUniverselleController listMontantUniverselleController;
+  final ChoixDesciptionDetailsFinanceEnumUseCase
+      choixDesciptionDetailsFinanceEnumUseCase;
+  final ChoixDesciptionEnumUseCase choixDesciptionEnumUseCase;
   Future<Null> delay(int milliseconds) {
     return new Future.delayed(new Duration(milliseconds: milliseconds));
   }
@@ -39,7 +45,7 @@ class EasyController extends ChangeNotifier {
   late double soldePrevisionel;
   late DateTime today = new DateTime.now();
   // late SharedPreferences _localData;
-  late SharedPreferences _localDataMontaUniverselle;
+  // late SharedPreferences _localDataMontaUniverselle;
   late SharedPreferences _localDataEcononyDays;
   late SharedPreferences _localDataMontantPrevision;
   late String patchData;
@@ -55,13 +61,21 @@ class EasyController extends ChangeNotifier {
       nbTacheEnCours: '',
       nbtacheVallide: '');
 
-  EasyController(this.listGestionMensuelController,  this._localData, this.addMontantGestionUseCase, this.removeGestionMensuelUseCase,) {
+  EasyController(
+    this.listGestionMensuelController,
+    this._localData,
+    this.addMontantGestionUseCase,
+    this.removeGestionMensuelUseCase,
+    this.listMontantUniverselleController,
+    this.choixDesciptionDetailsFinanceEnumUseCase,
+    this.choixDesciptionEnumUseCase,
+  ) {
     _initEconomy();
   }
 
   void _initEconomy() async {
     // _localData = await SharedPreferences.getInstance();
-    _localDataMontaUniverselle = await SharedPreferences.getInstance();
+    // _localDataMontaUniverselle = await SharedPreferences.getInstance();
     _localDataMontantPrevision = await SharedPreferences.getInstance();
     _localDataEcononyDays = await SharedPreferences.getInstance();
 
@@ -78,22 +92,23 @@ class EasyController extends ChangeNotifier {
     //       .toList();
     // }
 
-    _listGestionMensuel =
-        await listGestionMensuelController.loadData();
+    _listGestionMensuel = await listGestionMensuelController.loadData();
 
-    List<Map<String, dynamic>> _jsonDecodeListMontantUniverselle;
-    final List<String>? _tempListMontantuniverselle =
-        _localDataMontaUniverselle.getStringList(keyAccesMontantUniverselle);
-    if (_tempListMontantuniverselle != null) {
-      _jsonDecodeListMontantUniverselle = _tempListMontantuniverselle
-          .map((montantUniverselle) => jsonDecode(montantUniverselle))
-          .toList()
-          .cast<Map<String, dynamic>>();
+    // List<Map<String, dynamic>> _jsonDecodeListMontantUniverselle;
+    // final List<String>? _tempListMontantuniverselle =
+    //     _localDataMontaUniverselle.getStringList(keyAccesMontantUniverselle);
+    // if (_tempListMontantuniverselle != null) {
+    //   _jsonDecodeListMontantUniverselle = _tempListMontantuniverselle
+    //       .map((montantUniverselle) => jsonDecode(montantUniverselle))
+    //       .toList()
+    //       .cast<Map<String, dynamic>>();
 
-      _listMontantUniverselle = _jsonDecodeListMontantUniverselle
-          .map((challenge) => MontantUniverselle.fromJSON(challenge))
-          .toList();
-    }
+    //   _listMontantUniverselle = _jsonDecodeListMontantUniverselle
+    //       .map((challenge) => MontantUniverselle.fromJSON(challenge))
+    //       .toList();
+    // }
+    _listMontantUniverselle = await listMontantUniverselleController.loadData();
+
     List<Map<String, dynamic>> _jsonDecodeListMontantPrevision;
     final List<String>? _tempListMontantPrevision =
         _localDataMontantPrevision.getStringList(keyAccesMontantPrevision);
@@ -166,30 +181,30 @@ class EasyController extends ChangeNotifier {
     return montanUniverselle;
   }
 
-  unity_description choixDesciptionEnum(dynamic json) {
-    unity_description unity = unity_description.tache;
+  // unity_description choixDesciptionEnum(dynamic json) {
+  //   unity_description unity = unity_description.tache;
 
-    if (json == "tache") {
-      unity = unity_description.tache;
-      return unity;
-    } else if (json == "commentaire") {
-      unity = unity_description.commentaire;
-      return unity;
-    } else if (json == "image") {
-      unity = unity_description.image;
-      return unity;
-    } else if (json == "achat") {
-      unity = unity_description.achat;
-      return unity;
-    } else if (json == "echeancier") {
-      unity = unity_description.echeancier;
-      return unity;
-    } else if (json == "information") {
-      unity = unity_description.information;
-      return unity;
-    }
-    return unity;
-  }
+  //   if (json == "tache") {
+  //     unity = unity_description.tache;
+  //     return unity;
+  //   } else if (json == "commentaire") {
+  //     unity = unity_description.commentaire;
+  //     return unity;
+  //   } else if (json == "image") {
+  //     unity = unity_description.image;
+  //     return unity;
+  //   } else if (json == "achat") {
+  //     unity = unity_description.achat;
+  //     return unity;
+  //   } else if (json == "echeancier") {
+  //     unity = unity_description.echeancier;
+  //     return unity;
+  //   } else if (json == "information") {
+  //     unity = unity_description.information;
+  //     return unity;
+  //   }
+  //   return unity;
+  // }
 
   addDescriptionMontaUniv(
       {required List<double> achat,
@@ -206,7 +221,7 @@ class EasyController extends ChangeNotifier {
         DesciprtionUniverselle(
             adresseImage: adresseImage,
             commentaire: commentaire,
-            description: choixDesciptionEnum(description),
+            description: choixDesciptionEnumUseCase.execute(description),
             echeance: echeance,
             id: id,
             name: name,
@@ -247,8 +262,7 @@ class EasyController extends ChangeNotifier {
     List<String> _jsonList = _listMontantUniverselle.map((challenge) {
       return jsonEncode(challenge.toJson());
     }).toList();
-    return _localDataMontaUniverselle.setStringList(
-        keyAccesMontantUniverselle, _jsonList);
+    return _localData.setStringList(keyAccesMontantUniverselle, _jsonList);
   }
 
   double totalPrevision(
@@ -353,7 +367,7 @@ class EasyController extends ChangeNotifier {
         .add(DesciprtionUniverselle(
             adresseImage: adresseImage,
             commentaire: commentaire,
-            description: choixDesciptionEnum(description),
+            description: choixDesciptionEnumUseCase.execute(description),
             echeance: echeance,
             id: id,
             name: name,
@@ -418,17 +432,15 @@ class EasyController extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<bool> _saveMontantUniverselle({bool? remove}) async {
+  Future<bool> _saveMontantUniverselle({bool remove=false}) async {
     if (_listMontantUniverselle.length < 1 && remove!) {
-      return _localDataMontaUniverselle
-          .setStringList(keyAccesMontantUniverselle, []);
+      return _localData.setStringList(keyAccesMontantUniverselle, []);
     }
     if (_listMontantUniverselle.isNotEmpty) {
       List<String> _jsonList = _listMontantUniverselle.map((challenge) {
         return jsonEncode(challenge.toJson());
       }).toList();
-      return _localDataMontaUniverselle.setStringList(
-          keyAccesMontantUniverselle, _jsonList);
+      return _localData.setStringList(keyAccesMontantUniverselle, _jsonList);
     }
 
     return false;
@@ -470,24 +482,24 @@ class EasyController extends ChangeNotifier {
     return false;
   }
 
-  unity_Montant_universelle choixDesciptionEnum1(dynamic json) {
-    unity_Montant_universelle unity = unity_Montant_universelle.ChargeFixe;
+  // unity_Montant_universelle choixDesciptionEnum1(dynamic json) {
+  //   unity_Montant_universelle unity = unity_Montant_universelle.ChargeFixe;
 
-    if (json == "ChargeFixe") {
-      unity = unity_Montant_universelle.ChargeFixe;
-      return unity;
-    } else if (json == "RevenuFixe") {
-      unity = unity_Montant_universelle.RevenuFixe;
-      return unity;
-    } else if (json == "depensePonctuelle") {
-      unity = unity_Montant_universelle.depensePonctuelle;
-      return unity;
-    } else if (json == "RevenuPonctuel") {
-      unity = unity_Montant_universelle.RevenuPonctuel;
-      return unity;
-    }
-    return unity;
-  }
+  //   if (json == "ChargeFixe") {
+  //     unity = unity_Montant_universelle.ChargeFixe;
+  //     return unity;
+  //   } else if (json == "RevenuFixe") {
+  //     unity = unity_Montant_universelle.RevenuFixe;
+  //     return unity;
+  //   } else if (json == "depensePonctuelle") {
+  //     unity = unity_Montant_universelle.depensePonctuelle;
+  //     return unity;
+  //   } else if (json == "RevenuPonctuel") {
+  //     unity = unity_Montant_universelle.RevenuPonctuel;
+  //     return unity;
+  //   }
+  //   return unity;
+  // }
 
   void addMontanUniverselle({
     required int icones,
@@ -498,7 +510,7 @@ class EasyController extends ChangeNotifier {
   }) async {
     _listMontantUniverselle.add(
       MontantUniverselle(
-          unity: choixDesciptionEnum1(unity),
+          unity: choixDesciptionDetailsFinanceEnumUseCase.execute(unity),
           id: id,
           montant: montant,
           nom: nom,
@@ -509,9 +521,17 @@ class EasyController extends ChangeNotifier {
     );
     addMontantPrevision(
         id: id, montant: montant, nom: nom, unity: unity, icones: icones);
-    addMontantGestion(
-        id: id, montant: montant, nom: nom, unity: unity, icones: icones);
-
+    // addMontantGestion(
+    //     id: id, montant: montant, nom: nom, unity: unity, icones: icones);
+  addMontantGestionUseCase.execute(
+      icones: icones,
+      nom: nom,
+      montant: montant,
+      id: id,
+      unity: unity,
+      listGestionMensuel: _listGestionMensuel,
+    );
+    _initEconomyDays();
     await _saveMontantUniverselle();
     _initEconomy();
     notifyListeners();
@@ -547,24 +567,24 @@ class EasyController extends ChangeNotifier {
   //     }
   //   }
   // }
-    Future<void> addMontantGestion({
-    required int icones,
-    required String nom,
-    required double montant,
-    required String id,
-    required String unity,
-  }) async {
-    await addMontantGestionUseCase.execute(
-      icones: icones,
-      nom: nom,
-      montant: montant,
-      id: id,
-      unity: unity,
-      listGestionMensuel: _listGestionMensuel,
-    );
-    _initEconomyDays();
-    notifyListeners();
-  }
+  // Future<void> addMontantGestion({
+  //   required int icones,
+  //   required String nom,
+  //   required double montant,
+  //   required String id,
+  //   required String unity,
+  // }) async {
+  //   await addMontantGestionUseCase.execute(
+  //     icones: icones,
+  //     nom: nom,
+  //     montant: montant,
+  //     id: id,
+  //     unity: unity,
+  //     listGestionMensuel: _listGestionMensuel,
+  //   );
+  //   _initEconomyDays();
+  //   notifyListeners();
+  // }
 
   void addMontantPrevision({
     required int icones,
@@ -575,7 +595,7 @@ class EasyController extends ChangeNotifier {
   }) async {
     _listMontantPrevision.add(
       MontantUniverselle(
-          unity: choixDesciptionEnum1(unity),
+          unity: choixDesciptionDetailsFinanceEnumUseCase.execute(unity),
           id: id,
           montant: montant,
           nom: nom,
@@ -650,7 +670,7 @@ class EasyController extends ChangeNotifier {
       required String unity,
       required int index}) async {
     _listGestionMensuel[index].montantUniverselle.add(MontantUniverselle(
-        unity: choixDesciptionEnum1(unity),
+        unity: choixDesciptionDetailsFinanceEnumUseCase.execute(unity),
         id: id,
         montant: montant,
         nom: nom,
@@ -672,7 +692,7 @@ class EasyController extends ChangeNotifier {
       required String unity,
       required int index}) async {
     _listGestionMensuel[index].montantUniverselleLive.add(MontantUniverselle(
-        unity: choixDesciptionEnum1(unity),
+        unity: choixDesciptionDetailsFinanceEnumUseCase.execute(unity),
         id: id,
         montant: montant,
         nom: nom,
@@ -728,7 +748,7 @@ class EasyController extends ChangeNotifier {
   //   }
   // }
 
-   Future<void> removeGestionMensuelle({
+  Future<void> removeGestionMensuelle({
     required int index,
   }) async {
     await removeGestionMensuelUseCase.execute(
@@ -908,7 +928,6 @@ class EasyController extends ChangeNotifier {
 
   //   return false;
   // }
-
 
   deleteNombreEcheance() {}
 
@@ -1238,14 +1257,14 @@ class EasyController extends ChangeNotifier {
     }
   }
 
-void writeContent() async {
-  final file = await _localFile;
-  // Write the file
-  addMontanUniverselleUpload();
+  void writeContent() async {
+    final file = await _localFile;
+    // Write the file
+    addMontanUniverselleUpload();
 
-  await file.writeAsString(_saveLocalData());
-  Share.shareXFiles([XFile(file.path)], text: "Challenges");
-}
+    await file.writeAsString(_saveLocalData());
+    Share.shareXFiles([XFile(file.path)], text: "Challenges");
+  }
 
   String _saveLocalData() {
     Map<String, dynamic>? mapChallengeList = uploadFileChallenge.toJson();

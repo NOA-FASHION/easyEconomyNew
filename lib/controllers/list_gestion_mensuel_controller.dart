@@ -3,7 +3,6 @@ import 'dart:convert';
 import 'package:easyeconomy/mappers/mapper_listGestion_mensuel_json_to_model_usecase.dart';
 import 'package:easyeconomy/models/easy_economy_models.dart';
 import 'package:easyeconomy/services/gestionMensuelServices/gestion_mensuel_get_data_sharedpreferencies.dart';
-import 'package:easyeconomy/services/gestionMensuelServices/save_gestion_mensuel_sharedpreferencies.dart';
 import 'package:easyeconomy/useCases/gestionMensuelUsecase/load_gestion_mensuel_usecase.dart';
 import 'package:easyeconomy/useCases/gestionMensuelUsecase/save_gestion_mensuel_usecase.dart';
 
@@ -40,7 +39,7 @@ class ListGestionMensuelController {
     return [];
   }
 
-  Future<bool> saveGestionMensuelle({bool? remove}) async {
-    return await saveUseCase.execute(_listGestionMensuel, remove);
+  Future<bool> saveGestionMensuelle({bool remove=false}) async {
+    return await saveUseCase.execute(_listGestionMensuel, remove: remove);
   }
 }

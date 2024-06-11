@@ -15,7 +15,7 @@ class RemoveGestionMensuelUseCase {
   }) async {
     if (index >= 0 && index < listGestionMensuel.length) {
       listGestionMensuel.removeAt(index);
-      await saveGestionMensuelUseCase.execute(listGestionMensuel, true);
+      await saveGestionMensuelUseCase.execute(listGestionMensuel, remove: true);
     }
   }
 }

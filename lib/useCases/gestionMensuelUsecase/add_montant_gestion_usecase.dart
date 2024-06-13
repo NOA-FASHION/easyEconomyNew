@@ -4,7 +4,7 @@ import 'package:easyeconomy/useCases/gestionMensuelUsecase/save_gestion_mensuel_
 import 'package:intl/intl.dart';
 import 'package:injectable/injectable.dart';
 
-@singleton
+@injectable
 class AddMontantGestionUseCase {
   final SaveGestionMensuelUseCase saveGestionMensuelUseCase;
   final ChoixDesciptionDetailsFinanceEnumUseCase

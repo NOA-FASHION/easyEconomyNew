@@ -3,7 +3,7 @@ import 'package:injectable/injectable.dart';
 import 'package:easyeconomy/models/easy_economy_models.dart';
 
 
-@singleton
+@injectable
 class RemoveGestionMensuelUseCase {
   final SaveGestionMensuelUseCase saveGestionMensuelUseCase;
 

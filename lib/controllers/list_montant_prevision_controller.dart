@@ -1,28 +1,32 @@
 import 'dart:convert';
 import 'package:easyeconomy/models/easy_economy_models.dart';
 import 'package:easyeconomy/services/montantPrevision/montant_prevision_get_data_sharedpreferencies.dart';
-import 'package:easyeconomy/useCases/gestionMensuelUsecase/load_gestion_mensuel_usecase.dart';
-import 'package:easyeconomy/useCases/gestionMensuelUsecase/save_gestion_mensuel_usecase.dart';
+import 'package:easyeconomy/useCases/montantPrevisionUsecase/add_montant_prevision_usecase.dart';
+
 import 'package:easyeconomy/useCases/montantPrevisionUsecase/load_montant_prevision_usecase.dart';
+import 'package:easyeconomy/useCases/montantPrevisionUsecase/remove_montant_prevision_usecase.dart';
+
 import 'package:easyeconomy/useCases/montantPrevisionUsecase/save_montant_prevision_usecase.dart';
 
 import 'package:injectable/injectable.dart';
 
-
 @singleton
 class ListMontantPrevisionController {
- final MontantPrevisionGetDataSharedPreferences montantPrevisionGetDataSharedPreferences;
+  final MontantPrevisionGetDataSharedPreferences
+      montantPrevisionGetDataSharedPreferences;
 
   final LoadMontantPrevisionUseCase loadMontantPrevisionUseCase;
-
+  final AddMontantPrevisionUseCase addMontantPrevisionUseCase;
   final SaveMontantprevisionUseCase saveUseCase;
-
+  final RemoveMontantPrevisionUseCase removeMontantPrevisionUseCase;
   List<MontantUniverselle> _listMontantPrevision = [];
 
   ListMontantPrevisionController(
     this.montantPrevisionGetDataSharedPreferences,
     this.loadMontantPrevisionUseCase,
     this.saveUseCase,
+    this.removeMontantPrevisionUseCase,
+    this.addMontantPrevisionUseCase,
   );
 
   Future<List<MontantUniverselle>> loadData() async {
@@ -32,13 +36,42 @@ class ListMontantPrevisionController {
           .map((data) => jsonDecode(data))
           .toList()
           .cast<Map<String, dynamic>>();
-      _listMontantPrevision = await loadMontantPrevisionUseCase.execute(jsonList);
+      _listMontantPrevision =
+          await loadMontantPrevisionUseCase.execute(jsonList);
       return _listMontantPrevision;
     }
     return [];
   }
 
-  Future<bool> saveMontantPrevision({bool remove=false}) async {
-    return await saveUseCase.execute(_listMontantPrevision, remove: remove);
+  Future<void> removeMontantPrevision({
+    required int index,
+    required List<MontantUniverselle> listMontantPrevision,
+  }) async {
+    await removeMontantPrevisionUseCase.execute(
+      index: index,
+      listMontantPrevision: listMontantPrevision,
+    );
+  }
+
+  Future<void> addMontantPrevision({
+    required int icones,
+    required String nom,
+    required double montant,
+    required String id,
+    required String unity,
+    required List<MontantUniverselle> listMontantPrevision,
+  }) async {
+    await addMontantPrevisionUseCase.execute(
+      icones: icones,
+      nom: nom,
+      montant: montant,
+      id: id,
+      unity: unity,
+      listMontantPrevision: listMontantPrevision,
+    );
+  }
+
+  Future<bool> saveMontantPrevision(List<MontantUniverselle> listMontantPrevision,{bool remove = false}) async {
+    return await saveUseCase.execute(listMontantPrevision, remove: remove);
   }
 }

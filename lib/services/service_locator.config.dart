@@ -9,9 +9,9 @@ import 'package:get_it/get_it.dart' as _i1;
 import 'package:injectable/injectable.dart' as _i2;
 import 'package:shared_preferences/shared_preferences.dart' as _i6;
 
-import '../controllers/list_gestion_mensuel_controller.dart' as _i23;
-import '../controllers/list_montant_prevision_controller.dart' as _i24;
-import '../controllers/list_montant_universelle_controller.dart' as _i25;
+import '../controllers/list_gestion_mensuel_controller.dart' as _i25;
+import '../controllers/list_montant_prevision_controller.dart' as _i26;
+import '../controllers/list_montant_universelle_controller.dart' as _i27;
 import '../mappers/mapper_listGestion_mensuel_json_to_model_usecase.dart'
     as _i7;
 import '../useCases/choix_desciption_details_finance_enum_usecase.dart' as _i3;
@@ -28,12 +28,16 @@ import '../useCases/montantPrevisionUsecase/add_montant_prevision_usecase.dart'
     as _i17;
 import '../useCases/montantPrevisionUsecase/load_montant_prevision_usecase.dart'
     as _i20;
+import '../useCases/montantPrevisionUsecase/remove_montant_prevision_usecase.dart'
+    as _i23;
 import '../useCases/montantPrevisionUsecase/save_montant_prevision_usecase.dart'
     as _i15;
 import '../useCases/montantUniverselleUsecase/add_montant_universelle_usecase.dart'
     as _i18;
 import '../useCases/montantUniverselleUsecase/load_montant_universelle_usecase.dart'
     as _i21;
+import '../useCases/montantUniverselleUsecase/remove_montant_universelle_usecase.dart'
+    as _i24;
 import '../useCases/montantUniverselleUsecase/save_montant_universelle_usecase.dart'
     as _i14;
 import 'gestionMensuelServices/gestion_mensuel_get_data_sharedpreferencies.dart'
@@ -118,24 +122,36 @@ _i1.GetIt $initGetIt(
           get<_i7.MapperListGestionMensuelJsonToModelUseCase>()));
   gh.factory<_i22.RemoveGestionMensuelUseCase>(() =>
       _i22.RemoveGestionMensuelUseCase(get<_i11.SaveGestionMensuelUseCase>()));
-  gh.singleton<_i23.ListGestionMensuelController>(
-      _i23.ListGestionMensuelController(
+  gh.factory<_i23.RemoveMontantPrevisionUseCase>(() =>
+      _i23.RemoveMontantPrevisionUseCase(
+          get<_i15.SaveMontantprevisionUseCase>()));
+  gh.factory<_i24.RemoveMontantUniverselleUseCase>(() =>
+      _i24.RemoveMontantUniverselleUseCase(
+          get<_i14.SaveMontantUniverselleUseCase>()));
+  gh.singleton<_i25.ListGestionMensuelController>(
+      _i25.ListGestionMensuelController(
     get<_i5.GestionMensuelGetDataSharedpreferencies>(),
     get<_i7.MapperListGestionMensuelJsonToModelUseCase>(),
     get<_i19.LoadGestionMensuelUseCase>(),
     get<_i11.SaveGestionMensuelUseCase>(),
+    get<_i16.AddMontantGestionUseCase>(),
+    get<_i22.RemoveGestionMensuelUseCase>(),
   ));
-  gh.singleton<_i24.ListMontantPrevisionController>(
-      _i24.ListMontantPrevisionController(
+  gh.singleton<_i26.ListMontantPrevisionController>(
+      _i26.ListMontantPrevisionController(
     get<_i8.MontantPrevisionGetDataSharedPreferences>(),
     get<_i20.LoadMontantPrevisionUseCase>(),
     get<_i15.SaveMontantprevisionUseCase>(),
+    get<_i23.RemoveMontantPrevisionUseCase>(),
+    get<_i17.AddMontantPrevisionUseCase>(),
   ));
-  gh.singleton<_i25.ListMontantUniverselleController>(
-      _i25.ListMontantUniverselleController(
+  gh.singleton<_i27.ListMontantUniverselleController>(
+      _i27.ListMontantUniverselleController(
     get<_i9.MontantUniverselleGetDataSharedpreferencies>(),
     get<_i21.LoadMontantUniverselleUseCase>(),
     get<_i14.SaveMontantUniverselleUseCase>(),
+    get<_i18.AddMontantUniverselleUseCase>(),
+    get<_i24.RemoveMontantUniverselleUseCase>(),
   ));
   return get;
 }

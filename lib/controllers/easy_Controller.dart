@@ -7,11 +7,6 @@ import 'package:easyeconomy/controllers/list_montant_universelle_controller.dart
 import 'package:easyeconomy/models/easy_economy_models.dart';
 import 'package:easyeconomy/useCases/choix_desciption_details_finance_enum_usecase.dart';
 import 'package:easyeconomy/useCases/choix_description_enum_usecase.dart';
-import 'package:easyeconomy/useCases/gestionMensuelUsecase/add_montant_gestion_usecase.dart';
-import 'package:easyeconomy/useCases/gestionMensuelUsecase/remove_gestion_mensuel_usecase.dart';
-import 'package:easyeconomy/useCases/montantPrevisionUsecase/add_montant_prevision_usecase.dart';
-import 'package:easyeconomy/useCases/montantPrevisionUsecase/save_montant_prevision_usecase.dart';
-import 'package:easyeconomy/useCases/montantUniverselleUsecase/add_montant_universelle_usecase.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_document_picker/flutter_document_picker.dart';
 
@@ -35,13 +30,8 @@ const String keyAccesActivSwitch = "ChallengeyesterDay";
 class EasyController extends ChangeNotifier {
   final ListGestionMensuelController listGestionMensuelController;
   final SharedPreferences _localData;
-  final AddMontantGestionUseCase addMontantGestionUseCase;
-  final SaveMontantprevisionUseCase saveMontantprevisionUseCase;
-  final RemoveGestionMensuelUseCase removeGestionMensuelUseCase;
   final ListMontantUniverselleController listMontantUniverselleController;
-  final AddMontantUniverselleUseCase addMontantUniverselleUseCase;
   final ListMontantPrevisionController listMontantPrevisionController;
-  final AddMontantPrevisionUseCase addMontantPrevisionUseCase;
   final ChoixDesciptionDetailsFinanceEnumUseCase
       choixDesciptionDetailsFinanceEnumUseCase;
   final ChoixDesciptionEnumUseCase choixDesciptionEnumUseCase;
@@ -72,15 +62,10 @@ class EasyController extends ChangeNotifier {
   EasyController(
     this.listGestionMensuelController,
     this._localData,
-    this.addMontantGestionUseCase,
-    this.removeGestionMensuelUseCase,
     this.listMontantUniverselleController,
     this.choixDesciptionDetailsFinanceEnumUseCase,
     this.choixDesciptionEnumUseCase,
-    this.addMontantUniverselleUseCase,
     this.listMontantPrevisionController,
-    this.saveMontantprevisionUseCase,
-    this.addMontantPrevisionUseCase,
   ) {
     _initEconomy();
   }
@@ -240,7 +225,9 @@ class EasyController extends ChangeNotifier {
             name: name,
             previsions: previsions,
             nombreEcheance: nombreEcheance));
-    await _saveMontantUniverselle();
+    await listMontantPrevisionController.saveMontantPrevision(
+       _listMontantUniverselle,
+    );
     _initEconomy();
     notifyListeners();
     return;
@@ -388,7 +375,7 @@ class EasyController extends ChangeNotifier {
             nombreEcheance: nombreEcheance));
     montantPrevision(indexGestionMensuel, indexGestionMensuelMontantUniv);
     // await _saveGestionMensuelle();
-    await listGestionMensuelController.saveGestionMensuelle();
+    await listGestionMensuelController.saveGestionMensuelle(listGestionMensuel: _listGestionMensuel);
     _initEconomyDays();
     notifyListeners();
     return;
@@ -417,10 +404,17 @@ class EasyController extends ChangeNotifier {
   void removeMontantUniverselle({
     required int index,
   }) async {
-    // removeMontantPrevision(index: idmontantUniverselle(index));
-    _listMontantUniverselle.removeAt(index);
-    await _saveMontantUniverselle(remove: true);
-    _initEconomy();
+    try {
+      await listMontantUniverselleController.removeMontantUniverselle(
+        index: index,
+        listMontantUniverselle: _listMontantUniverselle,
+      );
+
+      notifyListeners();
+    } catch (e) {
+      print('Error in removeMontantUniverselle: $e');
+    }
+    // _initEconomy();
     notifyListeners();
   }
 
@@ -440,8 +434,8 @@ class EasyController extends ChangeNotifier {
             icones: _listMontantUniverselle[i].icones),
       );
     }
-    await saveMontantprevisionUseCase.execute(_listMontantPrevision,
-        remove: true);
+    await listMontantPrevisionController
+        .saveMontantPrevision(_listMontantPrevision, remove: true);
     _initEconomy();
     notifyListeners();
   }
@@ -470,15 +464,30 @@ class EasyController extends ChangeNotifier {
     return index2;
   }
 
-  void removeMontantPrevision({
+  // void removeMontantPrevision({
+  //   required int index,
+  // }) async {
+  //   // await removeChallengelistId(index);
+  //   _listMontantPrevision.removeAt(index);
+  //   await saveMontantprevisionUseCase.execute(_listMontantPrevision,
+  //       remove: true);
+  //   _initEconomy();
+  //   notifyListeners();
+  // }
+
+  Future<void> removeMontantPrevision({
     required int index,
   }) async {
-    // await removeChallengelistId(index);
-    _listMontantPrevision.removeAt(index);
-    await saveMontantprevisionUseCase.execute(_listMontantPrevision,
-        remove: true);
-    _initEconomy();
-    notifyListeners();
+    try {
+      await listMontantPrevisionController.removeMontantPrevision(
+        index: index,
+        listMontantPrevision: _listMontantPrevision,
+      );
+
+      notifyListeners();
+    } catch (e) {
+      print('Error in removeMontantPrevision: $e');
+    }
   }
 
   // Future<bool> _saveMontantPrevision({bool? remove}) async {
@@ -557,7 +566,7 @@ class EasyController extends ChangeNotifier {
     required String id,
     required String unity,
   }) async {
-    await addMontantUniverselleUseCase.execute(
+    await listMontantUniverselleController.addMontanUniverselle(
       icones: icones,
       nom: nom,
       montant: montant,
@@ -565,7 +574,7 @@ class EasyController extends ChangeNotifier {
       unity: unity,
       listMontantUniverselle: _listMontantUniverselle,
     );
-      await addMontantPrevisionUseCase.execute(
+    await listMontantPrevisionController.addMontantPrevision(
       icones: icones,
       nom: nom,
       montant: montant,
@@ -573,7 +582,7 @@ class EasyController extends ChangeNotifier {
       unity: unity,
       listMontantPrevision: _listMontantPrevision,
     );
-     await addMontantGestionUseCase.execute(
+    await listGestionMensuelController.addMontanUniverselle(
       icones: icones,
       nom: nom,
       montant: montant,
@@ -581,7 +590,7 @@ class EasyController extends ChangeNotifier {
       unity: unity,
       listGestionMensuel: _listGestionMensuel,
     );
-   
+
     // _initEconomyDays();
     // _initEconomy();
     notifyListeners();
@@ -667,7 +676,7 @@ class EasyController extends ChangeNotifier {
     required String id,
     required String unity,
   }) async {
-    await addMontantPrevisionUseCase.execute(
+    await listMontantPrevisionController.addMontantPrevision(
       icones: icones,
       nom: nom,
       montant: montant,
@@ -697,7 +706,7 @@ class EasyController extends ChangeNotifier {
       );
 
       // await _saveGestionMensuelle();
-      await listGestionMensuelController.saveGestionMensuelle();
+      await listGestionMensuelController.saveGestionMensuelle(listGestionMensuel: _listGestionMensuel);
       await _saveEconomyDays();
       // _initEconomyDays();
       // notifyListeners();
@@ -748,7 +757,7 @@ class EasyController extends ChangeNotifier {
         previsionsTotal: 0,
         icones: icones));
     // await _saveGestionMensuelle();
-    await listGestionMensuelController.saveGestionMensuelle();
+    await listGestionMensuelController.saveGestionMensuelle(listGestionMensuel: _listGestionMensuel);
     _initEconomyDays();
     notifyListeners();
   }
@@ -770,7 +779,7 @@ class EasyController extends ChangeNotifier {
         previsionsTotal: 0,
         icones: icones));
     // await _saveGestionMensuelle();
-    await listGestionMensuelController.saveGestionMensuelle();
+    await listGestionMensuelController.saveGestionMensuelle(listGestionMensuel: _listGestionMensuel);
     _initEconomyDays();
     notifyListeners();
   }
@@ -820,7 +829,7 @@ class EasyController extends ChangeNotifier {
   Future<void> removeGestionMensuelle({
     required int index,
   }) async {
-     removeGestionMensuelUseCase.execute(
+    listGestionMensuelController.removeGestionMensuelle(
       index: index,
       listGestionMensuel: _listGestionMensuel,
     );
@@ -1036,7 +1045,9 @@ class EasyController extends ChangeNotifier {
         echeancePasseMontanUniveValid(i);
       }
     }
-    await _saveMontantUniverselle();
+     await listMontantPrevisionController.saveMontantPrevision(
+       _listMontantUniverselle,
+    );
     _initEconomy();
     notifyListeners();
   }
@@ -1052,7 +1063,7 @@ class EasyController extends ChangeNotifier {
             .previsions);
     montantAchat(indexGestion, indexGestionLive);
     // await _saveGestionMensuelle();
-    await listGestionMensuelController.saveGestionMensuelle();
+    await listGestionMensuelController.saveGestionMensuelle(listGestionMensuel: _listGestionMensuel);
     _initEconomy();
     notifyListeners();
   }
@@ -1084,7 +1095,9 @@ class EasyController extends ChangeNotifier {
         echeanceNoPasseMontanUniveValid(i);
       }
     }
-    await _saveMontantUniverselle();
+    await listMontantPrevisionController.saveMontantPrevision(
+       _listMontantUniverselle,
+    );
     _initEconomy();
     notifyListeners();
   }
@@ -1096,7 +1109,9 @@ class EasyController extends ChangeNotifier {
     for (var i = _listMontantUniverselle.length - 1; i >= 0; i--) {
       _listMontantUniverselle[indexGestion].montant = double.parse(montant);
     }
-    await _saveMontantUniverselle();
+    await listMontantPrevisionController.saveMontantPrevision(
+       _listMontantUniverselle,
+    );
     _initEconomy();
     notifyListeners();
   }
@@ -1108,7 +1123,9 @@ class EasyController extends ChangeNotifier {
     for (var i = _listMontantUniverselle.length - 1; i >= 0; i--) {
       _listMontantUniverselle[indexGestion].nom = nom;
     }
-    await _saveMontantUniverselle();
+     await listMontantPrevisionController.saveMontantPrevision(
+       _listMontantUniverselle,
+    );
     _initEconomy();
     notifyListeners();
   }
@@ -1120,7 +1137,9 @@ class EasyController extends ChangeNotifier {
     for (var i = _listMontantUniverselle.length - 1; i >= 0; i--) {
       _listMontantUniverselle[indexGestion].icones = icons;
     }
-    await _saveMontantUniverselle();
+     await listMontantPrevisionController.saveMontantPrevision(
+       _listMontantUniverselle,
+    );
     _initEconomy();
     notifyListeners();
   }
@@ -1132,7 +1151,8 @@ class EasyController extends ChangeNotifier {
     for (var i = _listMontantPrevision.length - 1; i >= 0; i--) {
       _listMontantPrevision[indexGestion].montant = double.parse(montant);
     }
-    await await saveMontantprevisionUseCase.execute(_listMontantPrevision);
+    await await listMontantPrevisionController
+        .saveMontantPrevision(_listMontantPrevision);
     _initEconomy();
     notifyListeners();
   }
@@ -1144,7 +1164,8 @@ class EasyController extends ChangeNotifier {
     for (var i = _listMontantPrevision.length - 1; i >= 0; i--) {
       _listMontantPrevision[indexGestion].nom = nom;
     }
-    await await saveMontantprevisionUseCase.execute(_listMontantPrevision);
+    await await listMontantPrevisionController
+        .saveMontantPrevision(_listMontantPrevision);
     _initEconomy();
     notifyListeners();
   }
@@ -1156,7 +1177,8 @@ class EasyController extends ChangeNotifier {
     for (var i = _listMontantPrevision.length - 1; i >= 0; i--) {
       _listMontantPrevision[indexGestion].icones = icons;
     }
-    await await saveMontantprevisionUseCase.execute(_listMontantPrevision);
+    await await listMontantPrevisionController
+        .saveMontantPrevision(_listMontantPrevision);
     _initEconomy();
     notifyListeners();
   }
@@ -1171,7 +1193,7 @@ class EasyController extends ChangeNotifier {
         .montant = double.parse(montant);
 
     // await _saveGestionMensuelle();
-    await listGestionMensuelController.saveGestionMensuelle();
+    await listGestionMensuelController.saveGestionMensuelle(listGestionMensuel: _listGestionMensuel);
     _initEconomy();
     notifyListeners();
   }
@@ -1190,7 +1212,7 @@ class EasyController extends ChangeNotifier {
         .nom = nom;
 
     // await _saveGestionMensuelle();
-    await listGestionMensuelController.saveGestionMensuelle();
+    await listGestionMensuelController.saveGestionMensuelle(listGestionMensuel: _listGestionMensuel);
     _initEconomy();
     notifyListeners();
   }
@@ -1205,7 +1227,7 @@ class EasyController extends ChangeNotifier {
         .icones = icons;
 
     // await _saveGestionMensuelle();
-    await listGestionMensuelController.saveGestionMensuelle();
+    await listGestionMensuelController.saveGestionMensuelle(listGestionMensuel: _listGestionMensuel);
     _initEconomy();
     notifyListeners();
   }
@@ -1216,7 +1238,9 @@ class EasyController extends ChangeNotifier {
     } else {
       _listMontantUniverselle[index].previsionsTotal = 0;
     }
-    await _saveMontantUniverselle();
+     await listMontantPrevisionController.saveMontantPrevision(
+       _listMontantUniverselle,
+    );
     _initEconomy();
     notifyListeners();
   }
@@ -1227,7 +1251,8 @@ class EasyController extends ChangeNotifier {
     } else {
       _listMontantPrevision[index].previsionsTotal = 0;
     }
-    await saveMontantprevisionUseCase.execute(_listMontantPrevision);
+    await listMontantPrevisionController
+        .saveMontantPrevision(_listMontantPrevision);
     _initEconomy();
     notifyListeners();
   }
@@ -1247,7 +1272,7 @@ class EasyController extends ChangeNotifier {
           .previsionsTotal = 0;
     }
     // await _saveGestionMensuelle();
-    await listGestionMensuelController.saveGestionMensuelle();
+    await listGestionMensuelController.saveGestionMensuelle(listGestionMensuel: _listGestionMensuel);
     _initEconomy();
     notifyListeners();
   }

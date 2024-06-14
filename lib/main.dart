@@ -44,15 +44,10 @@ class _EasyEconomyState extends State<EasyEconomy> {
         create: (context) => EasyController(
           getIt<ListGestionMensuelController>(),
           getIt<SharedPreferences>(),
-          getIt<AddMontantGestionUseCase>(),
-          getIt<RemoveGestionMensuelUseCase>(),
           getIt<ListMontantUniverselleController>(),
           getIt<ChoixDesciptionDetailsFinanceEnumUseCase>(),
           getIt<ChoixDesciptionEnumUseCase>(),
-          getIt<AddMontantUniverselleUseCase>(),
           getIt<ListMontantPrevisionController>(),
-          getIt<SaveMontantprevisionUseCase>(),
-          getIt<AddMontantPrevisionUseCase>(),
           
         ),
         child: GuestScreenStart1(),

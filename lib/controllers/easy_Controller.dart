@@ -204,149 +204,226 @@ class EasyController extends ChangeNotifier {
   //   return unity;
   // }
 
-  addDescriptionMontaUniv(
-      {required List<double> achat,
-      required double previsions,
-      required double echeance,
-      required double nombreEcheance,
-      required String id,
-      required String adresseImage,
-      required String name,
-      required String commentaire,
-      required int indexChargeFixe,
-      required String description}) async {
-    _listMontantUniverselle[indexChargeFixe].descriptionUniverselle.add(
-        DesciprtionUniverselle(
-            adresseImage: adresseImage,
-            commentaire: commentaire,
-            description: choixDesciptionEnumUseCase.execute(description),
-            echeance: echeance,
-            id: id,
-            name: name,
-            previsions: previsions,
-            nombreEcheance: nombreEcheance));
-    await listMontantPrevisionController.saveMontantPrevision(
-       _listMontantUniverselle,
-    );
-    _initEconomy();
-    notifyListeners();
-    return;
+  // addDescriptionMontaUniv(
+  //     {required List<double> achat,
+  //     required double previsions,
+  //     required double echeance,
+  //     required double nombreEcheance,
+  //     required String id,
+  //     required String adresseImage,
+  //     required String name,
+  //     required String commentaire,
+  //     required int indexChargeFixe,
+  //     required String description}) async {
+  //   _listMontantUniverselle[indexChargeFixe].descriptionUniverselle.add(
+  //       DesciprtionUniverselle(
+  //           adresseImage: adresseImage,
+  //           commentaire: commentaire,
+  //           description: choixDesciptionEnumUseCase.execute(description),
+  //           echeance: echeance,
+  //           id: id,
+  //           name: name,
+  //           previsions: previsions,
+  //           nombreEcheance: nombreEcheance));
+  //   await listMontantPrevisionController.saveMontantPrevision(
+  //     _listMontantUniverselle,
+  //   );
+  //   _initEconomy();
+  //   notifyListeners();
+  //   return;
+  // }
+
+  Future<void> addDescriptionMontaUniv({
+    required List<double> achat,
+    required double previsions,
+    required double echeance,
+    required double nombreEcheance,
+    required String id,
+    required String adresseImage,
+    required String name,
+    required String commentaire,
+    required int indexChargeFixe,
+    required String description,
+  }) async {
+    try {
+      await listMontantUniverselleController.addDescriptionMontantUniverselle(
+        achat: achat,
+        previsions: previsions,
+        echeance: echeance,
+        nombreEcheance: nombreEcheance,
+        id: id,
+        adresseImage: adresseImage,
+        name: name,
+        commentaire: commentaire,
+        indexChargeFixe: indexChargeFixe,
+        description: description,
+        listMontantUniverselle: _listMontantUniverselle,
+      );
+
+      // _initEconomy();
+      notifyListeners();
+      return;
+    } catch (e) {
+      print('Error in addDescriptionMontantUniverselle: $e');
+    }
   }
 
-  void removeDescriptionMontaUniv({
+  // void removeDescriptionMontaUniv({
+  //   required int index,
+  //   required int indexChargeFixe,
+  // }) async {
+  //   _listMontantUniverselle[indexChargeFixe]
+  //       .descriptionUniverselle
+  //       .removeAt(index);
+
+  //   await _saveDescriptionMontaUniv(
+  //     remove: true,
+  //     indexChargeFixe: indexChargeFixe,
+  //     index: index,
+  //   );
+  //   _initEconomy();
+  //   notifyListeners();
+  // }
+
+  Future<void> removeDescriptionMontaUniv({
     required int index,
     required int indexChargeFixe,
   }) async {
-    _listMontantUniverselle[indexChargeFixe]
-        .descriptionUniverselle
-        .removeAt(index);
+    try {
+      await listMontantUniverselleController
+          .removeDescriptionMontantUniverselle(
+        index: index,
+        indexChargeFixe: indexChargeFixe,
+        listMontantUniverselle: _listMontantUniverselle,
+      );
 
-    await _saveDescriptionMontaUniv(
-      remove: true,
-      indexChargeFixe: indexChargeFixe,
-      index: index,
+      _initEconomy();
+      notifyListeners();
+    } catch (e) {
+      print('Error in removeDescriptionMontantUniverselle: $e');
+    }
+  }
+
+  // Future<bool> _saveDescriptionMontaUniv(
+  //     {required bool remove,
+  //     required int indexChargeFixe,
+  //     required int index}) async {
+  //   if (_listMontantUniverselle[indexChargeFixe].descriptionUniverselle.length <
+  //           1 &&
+  //       remove) {
+  //     _listMontantUniverselle[indexChargeFixe].descriptionUniverselle = [];
+  //   }
+  //   List<String> _jsonList = _listMontantUniverselle.map((challenge) {
+  //     return jsonEncode(challenge.toJson());
+  //   }).toList();
+  //   return _localData.setStringList(keyAccesMontantUniverselle, _jsonList);
+  // }
+
+  // double totalPrevision(
+  //     int indexGestionMensuel, int indexGestionMensuelMontantUniv) {
+  //   double totalPrev = 0;
+  //   for (var i = _listGestionMensuel[indexGestionMensuel]
+  //               .montantUniverselle[indexGestionMensuelMontantUniv]
+  //               .descriptionUniverselle
+  //               .length -
+  //           1;
+  //       i >= 0;
+  //       i--) {
+  //     totalPrev = totalPrev +
+  //         _listGestionMensuel[indexGestionMensuel]
+  //             .montantUniverselle[indexGestionMensuelMontantUniv]
+  //             .descriptionUniverselle[i]
+  //             .previsions;
+  //   }
+  //   return totalPrev;
+  // }
+
+  // double totalAchat(
+  //     int indexGestionMensuel, int indexGestionMensuelMontantUniv) {
+  //   double totalAchats = 0;
+  //   if (_listGestionMensuel[indexGestionMensuel]
+  //           .montantUniverselle[indexGestionMensuelMontantUniv]
+  //           .achat
+  //           .length >
+  //       0) {
+  //     for (var i = _listGestionMensuel[indexGestionMensuel]
+  //                 .montantUniverselle[indexGestionMensuelMontantUniv]
+  //                 .achat
+  //                 .length -
+  //             1;
+  //         i >= 0;
+  //         i--) {
+  //       totalAchats = totalAchats +
+  //           _listGestionMensuel[indexGestionMensuel]
+  //               .montantUniverselle[indexGestionMensuelMontantUniv]
+  //               .achat[i];
+  //     }
+  //   }
+  //   return totalAchats;
+  // }
+
+  // montantPrevision(
+  //     int indexGestionMensuel, int indexGestionMensuelMontantUniv) {
+  //   for (var i = _listGestionMensuel[indexGestionMensuel]
+  //               .montantUniverselle[indexGestionMensuelMontantUniv]
+  //               .descriptionUniverselle
+  //               .length -
+  //           1;
+  //       i >= 0;
+  //       i--) {
+  //     if (_listGestionMensuel[indexGestionMensuel]
+  //                 .montantUniverselle[indexGestionMensuelMontantUniv]
+  //                 .descriptionUniverselle[i]
+  //                 .previsions >
+  //             0 &&
+  //         _listGestionMensuel[indexGestionMensuel]
+  //                 .montantUniverselle[indexGestionMensuelMontantUniv]
+  //                 .achat
+  //                 .length <=
+  //             0) {
+  //       _listGestionMensuel[indexGestionMensuel]
+  //               .montantUniverselle[indexGestionMensuelMontantUniv]
+  //               .montant =
+  //           listGestionMensuelController.calculateTotalPrevision(indexGestionMensuel, indexGestionMensuelMontantUniv, _listGestionMensuel);
+  //       return;
+  //     }
+  //   }
+  // }
+
+  // montantAchat(int indexGestionMensuel, int indexGestionMensuelMontantUniv) {
+  //   if (_listGestionMensuel[indexGestionMensuel]
+  //           .montantUniverselle[indexGestionMensuelMontantUniv]
+  //           .achat
+  //           .length >
+  //       0) {
+  //     _listGestionMensuel[indexGestionMensuel]
+  //             .montantUniverselle[indexGestionMensuelMontantUniv]
+  //             .montant =
+  //         listGestionMensuelController.calculateTotalAchat(indexGestionMensuel, indexGestionMensuelMontantUniv, _listGestionMensuel);
+  //   }
+  // }
+
+  achatTotals(String idGestionMensMontantUnv, int indexGestion,
+      int indexGestionLive, int indexgestiondescription) async {
+    // _listGestionMensuel[indexGestion]
+    //     .montantUniverselle[indexGestionLive]
+    //     .achat
+    //     .add(_listGestionMensuel[indexGestion]
+    //         .montantUniverselle[indexGestionLive]
+    //         .descriptionUniverselle[indexgestiondescription]
+    //         .previsions);
+    await listGestionMensuelController.addAchatTotal(
+      indexGestion: indexGestion,
+      indexGestionLive: indexGestionLive,
+      indexGestionDescription: indexgestiondescription,
+      listGestionMensuel: _listGestionMensuel,
     );
-    _initEconomy();
+    await listGestionMensuelController.updateMontantAchat(
+        indexGestion, indexGestionLive, _listGestionMensuel);
+    // await listGestionMensuelController.saveGestionMensuelle(
+    //     listGestionMensuel: _listGestionMensuel);
+    // _initEconomy();
     notifyListeners();
-  }
-
-  Future<bool> _saveDescriptionMontaUniv(
-      {required bool remove,
-      required int indexChargeFixe,
-      required int index}) async {
-    if (_listMontantUniverselle[indexChargeFixe].descriptionUniverselle.length <
-            1 &&
-        remove) {
-      _listMontantUniverselle[indexChargeFixe].descriptionUniverselle = [];
-    }
-    List<String> _jsonList = _listMontantUniverselle.map((challenge) {
-      return jsonEncode(challenge.toJson());
-    }).toList();
-    return _localData.setStringList(keyAccesMontantUniverselle, _jsonList);
-  }
-
-  double totalPrevision(
-      int indexGestionMensuel, int indexGestionMensuelMontantUniv) {
-    double totalPrev = 0;
-    for (var i = _listGestionMensuel[indexGestionMensuel]
-                .montantUniverselle[indexGestionMensuelMontantUniv]
-                .descriptionUniverselle
-                .length -
-            1;
-        i >= 0;
-        i--) {
-      totalPrev = totalPrev +
-          _listGestionMensuel[indexGestionMensuel]
-              .montantUniverselle[indexGestionMensuelMontantUniv]
-              .descriptionUniverselle[i]
-              .previsions;
-    }
-    return totalPrev;
-  }
-
-  double totalAchat(
-      int indexGestionMensuel, int indexGestionMensuelMontantUniv) {
-    double totalAchats = 0;
-    if (_listGestionMensuel[indexGestionMensuel]
-            .montantUniverselle[indexGestionMensuelMontantUniv]
-            .achat
-            .length >
-        0) {
-      for (var i = _listGestionMensuel[indexGestionMensuel]
-                  .montantUniverselle[indexGestionMensuelMontantUniv]
-                  .achat
-                  .length -
-              1;
-          i >= 0;
-          i--) {
-        totalAchats = totalAchats +
-            _listGestionMensuel[indexGestionMensuel]
-                .montantUniverselle[indexGestionMensuelMontantUniv]
-                .achat[i];
-      }
-    }
-    return totalAchats;
-  }
-
-  montantPrevision(
-      int indexGestionMensuel, int indexGestionMensuelMontantUniv) {
-    for (var i = _listGestionMensuel[indexGestionMensuel]
-                .montantUniverselle[indexGestionMensuelMontantUniv]
-                .descriptionUniverselle
-                .length -
-            1;
-        i >= 0;
-        i--) {
-      if (_listGestionMensuel[indexGestionMensuel]
-                  .montantUniverselle[indexGestionMensuelMontantUniv]
-                  .descriptionUniverselle[i]
-                  .previsions >
-              0 &&
-          _listGestionMensuel[indexGestionMensuel]
-                  .montantUniverselle[indexGestionMensuelMontantUniv]
-                  .achat
-                  .length <=
-              0) {
-        _listGestionMensuel[indexGestionMensuel]
-                .montantUniverselle[indexGestionMensuelMontantUniv]
-                .montant =
-            totalPrevision(indexGestionMensuel, indexGestionMensuelMontantUniv);
-        return;
-      }
-    }
-  }
-
-  montantAchat(int indexGestionMensuel, int indexGestionMensuelMontantUniv) {
-    if (_listGestionMensuel[indexGestionMensuel]
-            .montantUniverselle[indexGestionMensuelMontantUniv]
-            .achat
-            .length >
-        0) {
-      _listGestionMensuel[indexGestionMensuel]
-              .montantUniverselle[indexGestionMensuelMontantUniv]
-              .montant =
-          totalAchat(indexGestionMensuel, indexGestionMensuelMontantUniv);
-    }
   }
 
   addDescriptionGestion(
@@ -361,22 +438,25 @@ class EasyController extends ChangeNotifier {
       required int indexGestionMensuel,
       required int indexGestionMensuelMontantUniv,
       required String description}) async {
-    _listGestionMensuel[indexGestionMensuel]
-        .montantUniverselle[indexGestionMensuelMontantUniv]
-        .descriptionUniverselle
-        .add(DesciprtionUniverselle(
-            adresseImage: adresseImage,
-            commentaire: commentaire,
-            description: choixDesciptionEnumUseCase.execute(description),
-            echeance: echeance,
-            id: id,
-            name: name,
-            previsions: previsions,
-            nombreEcheance: nombreEcheance));
-    montantPrevision(indexGestionMensuel, indexGestionMensuelMontantUniv);
-    // await _saveGestionMensuelle();
-    await listGestionMensuelController.saveGestionMensuelle(listGestionMensuel: _listGestionMensuel);
-    _initEconomyDays();
+    await listGestionMensuelController.addDescriptionGestion(
+        achat: achat,
+        previsions: previsions,
+        echeance: echeance,
+        nombreEcheance: nombreEcheance,
+        id: id,
+        adresseImage: adresseImage,
+        name: name,
+        commentaire: commentaire,
+        indexGestionMensuel: indexGestionMensuel,
+        indexGestionMensuelMontantUniv: indexGestionMensuelMontantUniv,
+        description: description,
+        listGestionMensuel: _listGestionMensuel);
+
+    listGestionMensuelController.updateMontantPrevision(indexGestionMensuel,
+        indexGestionMensuelMontantUniv, _listGestionMensuel);
+    // await listGestionMensuelController.saveGestionMensuelle(
+    //     listGestionMensuel: _listGestionMensuel);
+    // _initEconomyDays();
     notifyListeners();
     return;
   }
@@ -440,19 +520,19 @@ class EasyController extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<bool> _saveMontantUniverselle({bool remove = false}) async {
-    if (_listMontantUniverselle.length < 1 && remove!) {
-      return _localData.setStringList(keyAccesMontantUniverselle, []);
-    }
-    if (_listMontantUniverselle.isNotEmpty) {
-      List<String> _jsonList = _listMontantUniverselle.map((challenge) {
-        return jsonEncode(challenge.toJson());
-      }).toList();
-      return _localData.setStringList(keyAccesMontantUniverselle, _jsonList);
-    }
+  // Future<bool> _saveMontantUniverselle({bool remove = false}) async {
+  //   if (_listMontantUniverselle.length < 1 && remove!) {
+  //     return _localData.setStringList(keyAccesMontantUniverselle, []);
+  //   }
+  //   if (_listMontantUniverselle.isNotEmpty) {
+  //     List<String> _jsonList = _listMontantUniverselle.map((challenge) {
+  //       return jsonEncode(challenge.toJson());
+  //     }).toList();
+  //     return _localData.setStringList(keyAccesMontantUniverselle, _jsonList);
+  //   }
 
-    return false;
-  }
+  //   return false;
+  // }
 
   int idmontantUniverselle(int index) {
     int index2 = 0;
@@ -706,7 +786,8 @@ class EasyController extends ChangeNotifier {
       );
 
       // await _saveGestionMensuelle();
-      await listGestionMensuelController.saveGestionMensuelle(listGestionMensuel: _listGestionMensuel);
+      await listGestionMensuelController.saveGestionMensuelle(
+          listGestionMensuel: _listGestionMensuel);
       await _saveEconomyDays();
       // _initEconomyDays();
       // notifyListeners();
@@ -757,7 +838,8 @@ class EasyController extends ChangeNotifier {
         previsionsTotal: 0,
         icones: icones));
     // await _saveGestionMensuelle();
-    await listGestionMensuelController.saveGestionMensuelle(listGestionMensuel: _listGestionMensuel);
+    await listGestionMensuelController.saveGestionMensuelle(
+        listGestionMensuel: _listGestionMensuel);
     _initEconomyDays();
     notifyListeners();
   }
@@ -779,7 +861,8 @@ class EasyController extends ChangeNotifier {
         previsionsTotal: 0,
         icones: icones));
     // await _saveGestionMensuelle();
-    await listGestionMensuelController.saveGestionMensuelle(listGestionMensuel: _listGestionMensuel);
+    await listGestionMensuelController.saveGestionMensuelle(
+        listGestionMensuel: _listGestionMensuel);
     _initEconomyDays();
     notifyListeners();
   }
@@ -1045,25 +1128,9 @@ class EasyController extends ChangeNotifier {
         echeancePasseMontanUniveValid(i);
       }
     }
-     await listMontantPrevisionController.saveMontantPrevision(
-       _listMontantUniverselle,
+    await listMontantPrevisionController.saveMontantPrevision(
+      _listMontantUniverselle,
     );
-    _initEconomy();
-    notifyListeners();
-  }
-
-  achatTotals(String idGestionMensMontantUnv, int indexGestion,
-      int indexGestionLive, int indexgestiondescription) async {
-    _listGestionMensuel[indexGestion]
-        .montantUniverselle[indexGestionLive]
-        .achat
-        .add(_listGestionMensuel[indexGestion]
-            .montantUniverselle[indexGestionLive]
-            .descriptionUniverselle[indexgestiondescription]
-            .previsions);
-    montantAchat(indexGestion, indexGestionLive);
-    // await _saveGestionMensuelle();
-    await listGestionMensuelController.saveGestionMensuelle(listGestionMensuel: _listGestionMensuel);
     _initEconomy();
     notifyListeners();
   }
@@ -1096,7 +1163,7 @@ class EasyController extends ChangeNotifier {
       }
     }
     await listMontantPrevisionController.saveMontantPrevision(
-       _listMontantUniverselle,
+      _listMontantUniverselle,
     );
     _initEconomy();
     notifyListeners();
@@ -1110,7 +1177,7 @@ class EasyController extends ChangeNotifier {
       _listMontantUniverselle[indexGestion].montant = double.parse(montant);
     }
     await listMontantPrevisionController.saveMontantPrevision(
-       _listMontantUniverselle,
+      _listMontantUniverselle,
     );
     _initEconomy();
     notifyListeners();
@@ -1123,8 +1190,8 @@ class EasyController extends ChangeNotifier {
     for (var i = _listMontantUniverselle.length - 1; i >= 0; i--) {
       _listMontantUniverselle[indexGestion].nom = nom;
     }
-     await listMontantPrevisionController.saveMontantPrevision(
-       _listMontantUniverselle,
+    await listMontantPrevisionController.saveMontantPrevision(
+      _listMontantUniverselle,
     );
     _initEconomy();
     notifyListeners();
@@ -1137,8 +1204,8 @@ class EasyController extends ChangeNotifier {
     for (var i = _listMontantUniverselle.length - 1; i >= 0; i--) {
       _listMontantUniverselle[indexGestion].icones = icons;
     }
-     await listMontantPrevisionController.saveMontantPrevision(
-       _listMontantUniverselle,
+    await listMontantPrevisionController.saveMontantPrevision(
+      _listMontantUniverselle,
     );
     _initEconomy();
     notifyListeners();
@@ -1193,7 +1260,8 @@ class EasyController extends ChangeNotifier {
         .montant = double.parse(montant);
 
     // await _saveGestionMensuelle();
-    await listGestionMensuelController.saveGestionMensuelle(listGestionMensuel: _listGestionMensuel);
+    await listGestionMensuelController.saveGestionMensuelle(
+        listGestionMensuel: _listGestionMensuel);
     _initEconomy();
     notifyListeners();
   }
@@ -1212,7 +1280,8 @@ class EasyController extends ChangeNotifier {
         .nom = nom;
 
     // await _saveGestionMensuelle();
-    await listGestionMensuelController.saveGestionMensuelle(listGestionMensuel: _listGestionMensuel);
+    await listGestionMensuelController.saveGestionMensuelle(
+        listGestionMensuel: _listGestionMensuel);
     _initEconomy();
     notifyListeners();
   }
@@ -1227,7 +1296,8 @@ class EasyController extends ChangeNotifier {
         .icones = icons;
 
     // await _saveGestionMensuelle();
-    await listGestionMensuelController.saveGestionMensuelle(listGestionMensuel: _listGestionMensuel);
+    await listGestionMensuelController.saveGestionMensuelle(
+        listGestionMensuel: _listGestionMensuel);
     _initEconomy();
     notifyListeners();
   }
@@ -1238,8 +1308,8 @@ class EasyController extends ChangeNotifier {
     } else {
       _listMontantUniverselle[index].previsionsTotal = 0;
     }
-     await listMontantPrevisionController.saveMontantPrevision(
-       _listMontantUniverselle,
+    await listMontantPrevisionController.saveMontantPrevision(
+      _listMontantUniverselle,
     );
     _initEconomy();
     notifyListeners();
@@ -1272,7 +1342,8 @@ class EasyController extends ChangeNotifier {
           .previsionsTotal = 0;
     }
     // await _saveGestionMensuelle();
-    await listGestionMensuelController.saveGestionMensuelle(listGestionMensuel: _listGestionMensuel);
+    await listGestionMensuelController.saveGestionMensuelle(
+        listGestionMensuel: _listGestionMensuel);
     _initEconomy();
     notifyListeners();
   }

@@ -5,6 +5,7 @@ import 'package:easyeconomy/controllers/list_montant_universelle_controller.dart
 import 'package:easyeconomy/services/service_locator.dart';
 import 'package:easyeconomy/useCases/choix_desciption_details_finance_enum_usecase.dart';
 import 'package:easyeconomy/useCases/choix_description_enum_usecase.dart';
+import 'package:easyeconomy/useCases/generate_gestion_mensuel_prevision_usecase.dart';
 import 'package:easyeconomy/useCases/gestionMensuelUsecase/add_montant_gestion_usecase.dart';
 import 'package:easyeconomy/useCases/gestionMensuelUsecase/remove_gestion_mensuel_usecase.dart';
 import 'package:easyeconomy/useCases/montantPrevisionUsecase/add_montant_prevision_usecase.dart';
@@ -48,6 +49,7 @@ class _EasyEconomyState extends State<EasyEconomy> {
           getIt<ChoixDesciptionDetailsFinanceEnumUseCase>(),
           getIt<ChoixDesciptionEnumUseCase>(),
           getIt<ListMontantPrevisionController>(),
+          getIt<GenerateGestionMensuelPrevisionUseCase>(),
           
         ),
         child: GuestScreenStart1(),

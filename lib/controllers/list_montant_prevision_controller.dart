@@ -5,6 +5,7 @@ import 'package:easyeconomy/useCases/montantPrevisionUsecase/add_montant_previsi
 
 import 'package:easyeconomy/useCases/montantPrevisionUsecase/load_montant_prevision_usecase.dart';
 import 'package:easyeconomy/useCases/montantPrevisionUsecase/remove_montant_prevision_usecase.dart';
+import 'package:easyeconomy/useCases/montantPrevisionUsecase/reset_list_montant_prevision_usecase.dart';
 
 import 'package:easyeconomy/useCases/montantPrevisionUsecase/save_montant_prevision_usecase.dart';
 
@@ -18,6 +19,7 @@ class ListMontantPrevisionController {
   final LoadMontantPrevisionUseCase loadMontantPrevisionUseCase;
   final AddMontantPrevisionUseCase addMontantPrevisionUseCase;
   final SaveMontantprevisionUseCase saveUseCase;
+  final ResetListMontantPrevisionUseCase resetListMontantPrevisionUseCase;
   final RemoveMontantPrevisionUseCase removeMontantPrevisionUseCase;
   List<MontantUniverselle> _listMontantPrevision = [];
 
@@ -27,6 +29,7 @@ class ListMontantPrevisionController {
     this.saveUseCase,
     this.removeMontantPrevisionUseCase,
     this.addMontantPrevisionUseCase,
+    this.resetListMontantPrevisionUseCase,
   );
 
   Future<List<MontantUniverselle>> loadData() async {
@@ -71,7 +74,18 @@ class ListMontantPrevisionController {
     );
   }
 
-  Future<bool> saveMontantPrevision(List<MontantUniverselle> listMontantPrevision,{bool remove = false}) async {
+  Future<void> resetListMontantPrevision(
+      List<MontantUniverselle> listMontantUniverselle,
+      List<MontantUniverselle> listMontantPrevision) async {
+    await resetListMontantPrevisionUseCase.execute(
+      listMontantUniverselle: listMontantUniverselle,
+      listMontantPrevision: listMontantPrevision,
+    );
+  }
+
+  Future<bool> saveMontantPrevision(
+      List<MontantUniverselle> listMontantPrevision,
+      {bool remove = false}) async {
     return await saveUseCase.execute(listMontantPrevision, remove: remove);
   }
 }

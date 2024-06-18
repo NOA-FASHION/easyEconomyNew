@@ -7,6 +7,7 @@ import 'package:easyeconomy/controllers/list_montant_universelle_controller.dart
 import 'package:easyeconomy/models/easy_economy_models.dart';
 import 'package:easyeconomy/useCases/choix_desciption_details_finance_enum_usecase.dart';
 import 'package:easyeconomy/useCases/choix_description_enum_usecase.dart';
+import 'package:easyeconomy/useCases/generate_gestion_mensuel_prevision_usecase.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_document_picker/flutter_document_picker.dart';
 
@@ -32,6 +33,9 @@ class EasyController extends ChangeNotifier {
   final SharedPreferences _localData;
   final ListMontantUniverselleController listMontantUniverselleController;
   final ListMontantPrevisionController listMontantPrevisionController;
+  final GenerateGestionMensuelPrevisionUseCase
+      generateGestionMensuelPrevisionUseCase;
+
   final ChoixDesciptionDetailsFinanceEnumUseCase
       choixDesciptionDetailsFinanceEnumUseCase;
   final ChoixDesciptionEnumUseCase choixDesciptionEnumUseCase;
@@ -66,6 +70,7 @@ class EasyController extends ChangeNotifier {
     this.choixDesciptionDetailsFinanceEnumUseCase,
     this.choixDesciptionEnumUseCase,
     this.listMontantPrevisionController,
+    this.generateGestionMensuelPrevisionUseCase,
   ) {
     _initEconomy();
   }
@@ -498,25 +503,32 @@ class EasyController extends ChangeNotifier {
     notifyListeners();
   }
 
+  // void resetListMontantPrevision() async {
+  //   _listMontantPrevision = [];
+  //   for (var i = _listMontantUniverselle.length - 1; i >= 0; i--) {
+  //     _listMontantPrevision.add(
+  //       MontantUniverselle(
+  //           unity: _listMontantUniverselle[i].unity,
+  //           id: _listMontantUniverselle[i].id,
+  //           montant: _listMontantUniverselle[i].montant,
+  //           nom: _listMontantUniverselle[i].nom,
+  //           descriptionUniverselle:
+  //               _listMontantUniverselle[i].descriptionUniverselle,
+  //           achat: [],
+  //           previsionsTotal: 0,
+  //           icones: _listMontantUniverselle[i].icones),
+  //     );
+  //   }
+  //   await listMontantPrevisionController
+  //       .saveMontantPrevision(_listMontantPrevision, remove: true);
+  //   _initEconomy();
+  //   notifyListeners();
+  // }
+
   void resetListMontantPrevision() async {
     _listMontantPrevision = [];
-    for (var i = _listMontantUniverselle.length - 1; i >= 0; i--) {
-      _listMontantPrevision.add(
-        MontantUniverselle(
-            unity: _listMontantUniverselle[i].unity,
-            id: _listMontantUniverselle[i].id,
-            montant: _listMontantUniverselle[i].montant,
-            nom: _listMontantUniverselle[i].nom,
-            descriptionUniverselle:
-                _listMontantUniverselle[i].descriptionUniverselle,
-            achat: [],
-            previsionsTotal: 0,
-            icones: _listMontantUniverselle[i].icones),
-      );
-    }
-    await listMontantPrevisionController
-        .saveMontantPrevision(_listMontantPrevision, remove: true);
-    _initEconomy();
+    listMontantPrevisionController.resetListMontantPrevision(
+        _listMontantPrevision, _listMontantUniverselle);
     notifyListeners();
   }
 
@@ -779,7 +791,8 @@ class EasyController extends ChangeNotifier {
         GestionMensuel(
             idGestion: nanoid(10),
             mois: DateFormat('MMM').format(today),
-            montantUniverselle: _ListGestionMensuelPrevision(),
+            montantUniverselle: generateGestionMensuelPrevisionUseCase
+                .execute(_listMontantUniverselle),
             nom: 'Mois en cours',
             tendance: '',
             montantUniverselleLive: []),
@@ -821,6 +834,28 @@ class EasyController extends ChangeNotifier {
     starteconomyDays();
   }
 
+  // void addGestionMensuelMontantUniv(
+  //     {required int icones,
+  //     required String nom,
+  //     required double montant,
+  //     required String id,
+  //     required String unity,
+  //     required int index}) async {
+  //   _listGestionMensuel[index].montantUniverselle.add(MontantUniverselle(
+  //       unity: choixDesciptionDetailsFinanceEnumUseCase.execute(unity),
+  //       id: id,
+  //       montant: montant,
+  //       nom: nom,
+  //       descriptionUniverselle: [],
+  //       achat: [],
+  //       previsionsTotal: 0,
+  //       icones: icones));
+  //   // await _saveGestionMensuelle();
+  //   await listGestionMensuelController.saveGestionMensuelle(
+  //       listGestionMensuel: _listGestionMensuel);
+  //   _initEconomyDays();
+  //   notifyListeners();
+  // }
   void addGestionMensuelMontantUniv(
       {required int icones,
       required String nom,
@@ -828,22 +863,41 @@ class EasyController extends ChangeNotifier {
       required String id,
       required String unity,
       required int index}) async {
-    _listGestionMensuel[index].montantUniverselle.add(MontantUniverselle(
-        unity: choixDesciptionDetailsFinanceEnumUseCase.execute(unity),
-        id: id,
-        montant: montant,
-        nom: nom,
-        descriptionUniverselle: [],
-        achat: [],
-        previsionsTotal: 0,
-        icones: icones));
-    // await _saveGestionMensuelle();
-    await listGestionMensuelController.saveGestionMensuelle(
-        listGestionMensuel: _listGestionMensuel);
+    await listGestionMensuelController.addGestionMensuelMontantUniv(
+      icones: icones,
+      nom: nom,
+      montant: montant,
+      id: id,
+      unity: unity,
+      index: index,
+      listGestionMensuel: _listGestionMensuel,
+    );
     _initEconomyDays();
     notifyListeners();
   }
 
+  // void addGestionMensuelMontantUnivLive(
+  //     {required int icones,
+  //     required String nom,
+  //     required double montant,
+  //     required String id,
+  //     required String unity,
+  //     required int index}) async {
+  //   _listGestionMensuel[index].montantUniverselleLive.add(MontantUniverselle(
+  //       unity: choixDesciptionDetailsFinanceEnumUseCase.execute(unity),
+  //       id: id,
+  //       montant: montant,
+  //       nom: nom,
+  //       descriptionUniverselle: [],
+  //       achat: [],
+  //       previsionsTotal: 0,
+  //       icones: icones));
+  //   // await _saveGestionMensuelle();
+  //   await listGestionMensuelController.saveGestionMensuelle(
+  //       listGestionMensuel: _listGestionMensuel);
+  //   _initEconomyDays();
+  //   notifyListeners();
+  // }
   void addGestionMensuelMontantUnivLive(
       {required int icones,
       required String nom,
@@ -851,40 +905,38 @@ class EasyController extends ChangeNotifier {
       required String id,
       required String unity,
       required int index}) async {
-    _listGestionMensuel[index].montantUniverselleLive.add(MontantUniverselle(
-        unity: choixDesciptionDetailsFinanceEnumUseCase.execute(unity),
-        id: id,
-        montant: montant,
-        nom: nom,
-        descriptionUniverselle: [],
-        achat: [],
-        previsionsTotal: 0,
-        icones: icones));
-    // await _saveGestionMensuelle();
-    await listGestionMensuelController.saveGestionMensuelle(
-        listGestionMensuel: _listGestionMensuel);
+    await listGestionMensuelController.addGestionMensuelMontantUnivLive(
+      icones: icones,
+      nom: nom,
+      montant: montant,
+      id: id,
+      unity: unity,
+      index: index,
+      listGestionMensuel: _listGestionMensuel,
+    );
+
     _initEconomyDays();
     notifyListeners();
   }
 
-  List<MontantUniverselle> _ListGestionMensuelPrevision() {
-    List<MontantUniverselle> listMontantPrevision1 = [];
-    for (var i = _listMontantUniverselle.length - 1; i >= 0; i--) {
-      listMontantPrevision1.add(
-        MontantUniverselle(
-            unity: _listMontantUniverselle[i].unity,
-            id: _listMontantUniverselle[i].id,
-            montant: _listMontantUniverselle[i].montant,
-            nom: _listMontantUniverselle[i].nom,
-            descriptionUniverselle:
-                _listMontantUniverselle[i].descriptionUniverselle,
-            achat: [],
-            previsionsTotal: 0,
-            icones: _listMontantUniverselle[i].icones),
-      );
-    }
-    return listMontantPrevision1;
-  }
+  // List<MontantUniverselle> _ListGestionMensuelPrevision() {
+  //   List<MontantUniverselle> listMontantPrevision1 = [];
+  //   for (var i = _listMontantUniverselle.length - 1; i >= 0; i--) {
+  //     listMontantPrevision1.add(
+  //       MontantUniverselle(
+  //           unity: _listMontantUniverselle[i].unity,
+  //           id: _listMontantUniverselle[i].id,
+  //           montant: _listMontantUniverselle[i].montant,
+  //           nom: _listMontantUniverselle[i].nom,
+  //           descriptionUniverselle:
+  //               _listMontantUniverselle[i].descriptionUniverselle,
+  //           achat: [],
+  //           previsionsTotal: 0,
+  //           icones: _listMontantUniverselle[i].icones),
+  //     );
+  //   }
+  //   return listMontantPrevision1;
+  // }
 
   // void creatListGestionMensuel() async {
   //   DateTime today = new DateTime.now();
@@ -931,150 +983,207 @@ class EasyController extends ChangeNotifier {
   //   notifyListeners();
   // }
 
+  // void removeGestionMensuelleMontantUnivLive(
+  //     {required bool validation,
+  //     required int indexGestionMensuel,
+  //     required int indexGestionMensMontanUniv,
+  //     required String idGestionMensMontanUniv}) async {
+  //   if (validation) {
+  //     _listGestionMensuel[indexGestionMensuel].montantUniverselle.add(
+  //           MontantUniverselle(
+  //               unity: _listGestionMensuel[indexGestionMensuel]
+  //                   .montantUniverselleLive[indexGestionMensMontanUniv]
+  //                   .unity,
+  //               id: _listGestionMensuel[indexGestionMensuel]
+  //                   .montantUniverselleLive[indexGestionMensMontanUniv]
+  //                   .id,
+  //               montant: _listGestionMensuel[indexGestionMensuel]
+  //                   .montantUniverselleLive[indexGestionMensMontanUniv]
+  //                   .montant,
+  //               nom: _listGestionMensuel[indexGestionMensuel]
+  //                   .montantUniverselleLive[indexGestionMensMontanUniv]
+  //                   .nom,
+  //               descriptionUniverselle: _listGestionMensuel[indexGestionMensuel]
+  //                   .montantUniverselleLive[indexGestionMensMontanUniv]
+  //                   .descriptionUniverselle,
+  //               achat: _listGestionMensuel[indexGestionMensuel]
+  //                   .montantUniverselleLive[indexGestionMensMontanUniv]
+  //                   .achat,
+  //               previsionsTotal: _listGestionMensuel[indexGestionMensuel]
+  //                   .montantUniverselleLive[indexGestionMensMontanUniv]
+  //                   .previsionsTotal,
+  //               icones: _listGestionMensuel[indexGestionMensuel]
+  //                   .montantUniverselleLive[indexGestionMensMontanUniv]
+  //                   .icones),
+  //         );
+  //   }
+
+  //   _listGestionMensuel[indexGestionMensuel]
+  //       .montantUniverselleLive
+  //       .removeAt(indexGestionMensMontanUniv);
+
+  //   await _saveGestionMensuelleMontantUniv(
+  //       remove: true, idGestionMensMontanUniv: idGestionMensMontanUniv);
+  //   _initEconomy();
+  //   notifyListeners();
+  // }
+
   void removeGestionMensuelleMontantUnivLive(
       {required bool validation,
       required int indexGestionMensuel,
       required int indexGestionMensMontanUniv,
       required String idGestionMensMontanUniv}) async {
-    if (validation) {
-      _listGestionMensuel[indexGestionMensuel].montantUniverselle.add(
-            MontantUniverselle(
-                unity: _listGestionMensuel[indexGestionMensuel]
-                    .montantUniverselleLive[indexGestionMensMontanUniv]
-                    .unity,
-                id: _listGestionMensuel[indexGestionMensuel]
-                    .montantUniverselleLive[indexGestionMensMontanUniv]
-                    .id,
-                montant: _listGestionMensuel[indexGestionMensuel]
-                    .montantUniverselleLive[indexGestionMensMontanUniv]
-                    .montant,
-                nom: _listGestionMensuel[indexGestionMensuel]
-                    .montantUniverselleLive[indexGestionMensMontanUniv]
-                    .nom,
-                descriptionUniverselle: _listGestionMensuel[indexGestionMensuel]
-                    .montantUniverselleLive[indexGestionMensMontanUniv]
-                    .descriptionUniverselle,
-                achat: _listGestionMensuel[indexGestionMensuel]
-                    .montantUniverselleLive[indexGestionMensMontanUniv]
-                    .achat,
-                previsionsTotal: _listGestionMensuel[indexGestionMensuel]
-                    .montantUniverselleLive[indexGestionMensMontanUniv]
-                    .previsionsTotal,
-                icones: _listGestionMensuel[indexGestionMensuel]
-                    .montantUniverselleLive[indexGestionMensMontanUniv]
-                    .icones),
-          );
-    }
+    listGestionMensuelController.removeGestionMensuelleMontantUnivLive(
+      validation: validation,
+      indexGestionMensuel: indexGestionMensuel,
+      indexGestionMensMontanUniv: indexGestionMensMontanUniv,
+      idGestionMensMontanUniv: idGestionMensMontanUniv,
+      listGestionMensuel: _listGestionMensuel,
+    );
 
-    _listGestionMensuel[indexGestionMensuel]
-        .montantUniverselleLive
-        .removeAt(indexGestionMensMontanUniv);
-
-    await _saveGestionMensuelleMontantUniv(
-        remove: true, idGestionMensMontanUniv: idGestionMensMontanUniv);
+    await listGestionMensuelController.saveGestionMensuelleMontantUniv(
+        remove: true,
+        idGestionMensMontanUniv: idGestionMensMontanUniv,
+        listGestionMensuel: _listGestionMensuel);
     _initEconomy();
     notifyListeners();
   }
+
+  // void removeGestionDescriptionGestion(
+  //     {required int index,
+  //     required int indexGestionMensuel,
+  //     required int indexGestionMensMontanUniv,
+  //     required String idGestionMensMontanUniv}) async {
+  //   _listGestionMensuel[indexGestionMensuel]
+  //       .montantUniverselle[indexGestionMensMontanUniv]
+  //       .descriptionUniverselle
+  //       .removeAt(index);
+
+  //   await listGestionMensuelController.saveDescriptionGestion(
+  //     remove: true,
+  //     indexGestionMensuel: indexGestionMensuel,
+  //     indexGestionMensuelMontantUniv: indexGestionMensMontanUniv,
+  //     listGestionMensuel: _listGestionMensuel,
+  //   );
+  //   // _initEconomy();
+  //   notifyListeners();
+  // }
 
   void removeGestionDescriptionGestion(
       {required int index,
       required int indexGestionMensuel,
       required int indexGestionMensMontanUniv,
       required String idGestionMensMontanUniv}) async {
-    _listGestionMensuel[indexGestionMensuel]
-        .montantUniverselle[indexGestionMensMontanUniv]
-        .descriptionUniverselle
-        .removeAt(index);
-
-    await _saveDescriptionGestion(
-      remove: true,
+    listGestionMensuelController.removeGestionDescriptionGestion(
+      index: index,
       indexGestionMensuel: indexGestionMensuel,
+      idGestionMensMontanUniv: idGestionMensMontanUniv,
+      listGestionMensuel: _listGestionMensuel,
       indexGestionMensuelMontantUniv: indexGestionMensMontanUniv,
     );
-    _initEconomy();
+
     notifyListeners();
   }
 
-  Future<bool> _saveDescriptionGestion(
-      {required bool remove,
-      required int indexGestionMensuel,
-      required int indexGestionMensuelMontantUniv}) async {
-    if (_listGestionMensuel[indexGestionMensuel]
-                .montantUniverselle[indexGestionMensuelMontantUniv]
-                .descriptionUniverselle
-                .length <
-            1 &&
-        remove) {
-      _listGestionMensuel[indexGestionMensuel]
-          .montantUniverselle[indexGestionMensuelMontantUniv]
-          .descriptionUniverselle = [];
-    }
-    List<String> _jsonList = _listGestionMensuel.map((gestion) {
-      return jsonEncode(gestion.toJson());
-    }).toList();
-    return _localData.setStringList(keyAcces, _jsonList);
-  }
+  // Future<bool> _saveDescriptionGestion(
+  //     {required bool remove,
+  //     required int indexGestionMensuel,
+  //     required int indexGestionMensuelMontantUniv}) async {
+  //   if (_listGestionMensuel[indexGestionMensuel]
+  //               .montantUniverselle[indexGestionMensuelMontantUniv]
+  //               .descriptionUniverselle
+  //               .length <
+  //           1 &&
+  //       remove) {
+  //     _listGestionMensuel[indexGestionMensuel]
+  //         .montantUniverselle[indexGestionMensuelMontantUniv]
+  //         .descriptionUniverselle = [];
+  //   }
+  //   List<String> _jsonList = _listGestionMensuel.map((gestion) {
+  //     return jsonEncode(gestion.toJson());
+  //   }).toList();
+  //   return _localData.setStringList(keyAcces, _jsonList);
+  // }
+
+  // void removeGestionMensuelleMontantUniv(
+  //     {required bool validation,
+  //     required int indexGestionMensuel,
+  //     required int indexGestionMensMontanUniv,
+  //     required String idGestionMensMontanUniv}) async {
+  //   if (validation) {
+  //     _listGestionMensuel[indexGestionMensuel].montantUniverselleLive.add(
+  //           MontantUniverselle(
+  //               unity: _listGestionMensuel[indexGestionMensuel]
+  //                   .montantUniverselle[indexGestionMensMontanUniv]
+  //                   .unity,
+  //               id: _listGestionMensuel[indexGestionMensuel]
+  //                   .montantUniverselle[indexGestionMensMontanUniv]
+  //                   .id,
+  //               montant: _listGestionMensuel[indexGestionMensuel]
+  //                   .montantUniverselle[indexGestionMensMontanUniv]
+  //                   .montant,
+  //               nom: _listGestionMensuel[indexGestionMensuel]
+  //                   .montantUniverselle[indexGestionMensMontanUniv]
+  //                   .nom,
+  //               descriptionUniverselle: _listGestionMensuel[indexGestionMensuel]
+  //                   .montantUniverselle[indexGestionMensMontanUniv]
+  //                   .descriptionUniverselle,
+  //               achat: _listGestionMensuel[indexGestionMensuel]
+  //                   .montantUniverselle[indexGestionMensMontanUniv]
+  //                   .achat,
+  //               previsionsTotal: _listGestionMensuel[indexGestionMensuel]
+  //                   .montantUniverselle[indexGestionMensMontanUniv]
+  //                   .previsionsTotal,
+  //               icones: _listGestionMensuel[indexGestionMensuel]
+  //                   .montantUniverselle[indexGestionMensMontanUniv]
+  //                   .icones),
+  //         );
+  //   }
+
+  //   _listGestionMensuel[indexGestionMensuel]
+  //       .montantUniverselle
+  //       .removeAt(indexGestionMensMontanUniv);
+
+  //   await listGestionMensuelController.saveGestionMensuelleMontantUniv(
+  //       remove: true,
+  //       idGestionMensMontanUniv: idGestionMensMontanUniv,
+  //       listGestionMensuel: _listGestionMensuel);
+  //   _initEconomy();
+  //   notifyListeners();
+  // }
 
   void removeGestionMensuelleMontantUniv(
       {required bool validation,
       required int indexGestionMensuel,
       required int indexGestionMensMontanUniv,
       required String idGestionMensMontanUniv}) async {
-    if (validation) {
-      _listGestionMensuel[indexGestionMensuel].montantUniverselleLive.add(
-            MontantUniverselle(
-                unity: _listGestionMensuel[indexGestionMensuel]
-                    .montantUniverselle[indexGestionMensMontanUniv]
-                    .unity,
-                id: _listGestionMensuel[indexGestionMensuel]
-                    .montantUniverselle[indexGestionMensMontanUniv]
-                    .id,
-                montant: _listGestionMensuel[indexGestionMensuel]
-                    .montantUniverselle[indexGestionMensMontanUniv]
-                    .montant,
-                nom: _listGestionMensuel[indexGestionMensuel]
-                    .montantUniverselle[indexGestionMensMontanUniv]
-                    .nom,
-                descriptionUniverselle: _listGestionMensuel[indexGestionMensuel]
-                    .montantUniverselle[indexGestionMensMontanUniv]
-                    .descriptionUniverselle,
-                achat: _listGestionMensuel[indexGestionMensuel]
-                    .montantUniverselle[indexGestionMensMontanUniv]
-                    .achat,
-                previsionsTotal: _listGestionMensuel[indexGestionMensuel]
-                    .montantUniverselle[indexGestionMensMontanUniv]
-                    .previsionsTotal,
-                icones: _listGestionMensuel[indexGestionMensuel]
-                    .montantUniverselle[indexGestionMensMontanUniv]
-                    .icones),
-          );
-    }
+    listGestionMensuelController.removeGestionMensuelleMontantUniv(
+      indexGestionMensuel: indexGestionMensuel,
+      indexGestionMensMontanUniv: indexGestionMensMontanUniv,
+      idGestionMensMontanUniv: idGestionMensMontanUniv,
+      listGestionMensuel: _listGestionMensuel,
+      validation: validation,
+    );
 
-    _listGestionMensuel[indexGestionMensuel]
-        .montantUniverselle
-        .removeAt(indexGestionMensMontanUniv);
-
-    await _saveGestionMensuelleMontantUniv(
-        remove: true, idGestionMensMontanUniv: idGestionMensMontanUniv);
-    _initEconomy();
+    // _initEconomy();
     notifyListeners();
   }
 
-  Future<bool> _saveGestionMensuelleMontantUniv(
-      {required bool remove, required String idGestionMensMontanUniv}) async {
-    for (var i = _listGestionMensuel.length - 1; i >= 0; i--) {
-      if (_listGestionMensuel[i].idGestion == idGestionMensMontanUniv) {
-        if (_listGestionMensuel[i].montantUniverselle.length < 1 && remove) {
-          _listGestionMensuel[i].montantUniverselle = [];
-        }
-        List<String> _jsonList = _listGestionMensuel.map((gestion) {
-          return jsonEncode(gestion.toJson());
-        }).toList();
-        return _localData.setStringList(keyAcces, _jsonList);
-      }
-    }
-    return false;
-  }
+  // Future<bool> _saveGestionMensuelleMontantUniv(
+  //     {required bool remove, required String idGestionMensMontanUniv}) async {
+  //   for (var i = _listGestionMensuel.length - 1; i >= 0; i--) {
+  //     if (_listGestionMensuel[i].idGestion == idGestionMensMontanUniv) {
+  //       if (_listGestionMensuel[i].montantUniverselle.length < 1 && remove) {
+  //         _listGestionMensuel[i].montantUniverselle = [];
+  //       }
+  //       List<String> _jsonList = _listGestionMensuel.map((gestion) {
+  //         return jsonEncode(gestion.toJson());
+  //       }).toList();
+  //       return _localData.setStringList(keyAcces, _jsonList);
+  //     }
+  //   }
+  //   return false;
+  // }
 
   // Future<bool> _saveGestionMensuelle({bool? remove}) async {
   //   if (_listGestionMensuel.length < 1 && remove!) {
@@ -1092,7 +1201,7 @@ class EasyController extends ChangeNotifier {
 
   deleteNombreEcheance() {}
 
-  echeancePasseMontanUniveValid(int index) {
+  echeancePasseMontanUniveValid(int index) async{
     for (var i =
             _listMontantUniverselle[index].descriptionUniverselle.length - 1;
         i >= 0;
@@ -1113,7 +1222,10 @@ class EasyController extends ChangeNotifier {
               .nombreEcheance ==
           0) {
         // print("montant echeance ok");
-        removeMontantUniverselle(index: index);
+         await listMontantUniverselleController.removeMontantUniverselle(
+        index: index,
+        listMontantUniverselle: _listMontantUniverselle,
+      );
       }
     }
   }

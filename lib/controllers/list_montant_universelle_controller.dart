@@ -2,24 +2,37 @@ import 'dart:convert';
 import 'package:easyeconomy/services/montantUniverselleServices/montant_universelle_get_data_sharedpreferencies.dart';
 import 'package:easyeconomy/useCases/montantUniverselleUsecase/add_description_montant_universelle_usecase.dart';
 import 'package:easyeconomy/useCases/montantUniverselleUsecase/add_montant_universelle_usecase.dart';
+import 'package:easyeconomy/useCases/montantUniverselleUsecase/change_icons_usecase.dart';
+import 'package:easyeconomy/useCases/montantUniverselleUsecase/change_titre_usecase.dart';
+import 'package:easyeconomy/useCases/montantUniverselleUsecase/echeance_passe_montan_unive_usecase.dart';
 import 'package:easyeconomy/useCases/montantUniverselleUsecase/load_montant_universelle_usecase.dart';
 import 'package:easyeconomy/useCases/montantUniverselleUsecase/remove_description_montant_universelle_usecase.dart';
 import 'package:easyeconomy/useCases/montantUniverselleUsecase/remove_montant_universelle_usecase.dart';
 import 'package:easyeconomy/useCases/montantUniverselleUsecase/save_montant_universelle_usecase.dart';
+import 'package:easyeconomy/useCases/montantUniverselleUsecase/toggle_active_montant_universelle_usecase.dart';
 import 'package:injectable/injectable.dart';
 import 'package:easyeconomy/models/easy_economy_models.dart';
+
+import '../useCases/montantUniverselleUsecase/change_prix_usecase.dart';
+import '../useCases/montantUniverselleUsecase/echeance_no_passe_montan_unive_usecase.dart';
 
 @singleton
 class ListMontantUniverselleController {
   final MontantUniverselleGetDataSharedpreferencies getDataService;
   final LoadMontantUniverselleUseCase loadUseCase;
+  final ChangeIconsUseCase changeIconsUseCase;
   final SaveMontantUniverselleUseCase saveUseCase;
   final AddDescriptionMontantUniverselleUseCase
       addDescriptionUniverselleUseCase;
+  final EcheanceNoPasseMontanUniveUseCase echeanceNoPasseMontanUniveUseCase;
+  final ToggleActiveMontantUniverselleUseCase toggleActiveMontantUniverselleUseCase;
+  final ChangeTitreUseCase changeTitreUseCase;
   final AddMontantUniverselleUseCase addMontantUniverselleUseCase;
+  final ChangePrixUseCase changePrixUseCase;
   final RemoveMontantUniverselleUseCase removeUniverselleUseCase;
   final RemoveDescriptionMontantUniverselleUseCase
       removeDescriptionUniverselleUseCase;
+  final EcheancePasseMontanUniveUseCase echeancePasseMontanUniveUseCase;
   List<MontantUniverselle> _listMontantUniverselle = [];
 
   ListMontantUniverselleController(
@@ -30,6 +43,11 @@ class ListMontantUniverselleController {
     this.removeUniverselleUseCase,
     this.addDescriptionUniverselleUseCase,
     this.removeDescriptionUniverselleUseCase,
+    this.echeancePasseMontanUniveUseCase,
+    this.echeanceNoPasseMontanUniveUseCase,
+    this.changePrixUseCase,
+    this.changeTitreUseCase,
+    this.changeIconsUseCase, this.toggleActiveMontantUniverselleUseCase,
   );
 
   Future<List<MontantUniverselle>> loadData() async {
@@ -109,6 +127,84 @@ class ListMontantUniverselleController {
     await removeDescriptionUniverselleUseCase.execute(
       index: index,
       indexChargeFixe: indexChargeFixe,
+      listMontantUniverselle: listMontantUniverselle,
+    );
+  }
+
+  Future<void> echeancePasseMontanUnive({
+    required String idGestionMensMontantUnv,
+    required int indexGestion,
+    required int indexGestionLive,
+    required List<GestionMensuel> listGestionMensuel,
+    required List<MontantUniverselle> listMontantUniverselle,
+  }) async {
+    await echeancePasseMontanUniveUseCase.execute(
+      idGestionMensMontantUnv: idGestionMensMontantUnv,
+      indexGestion: indexGestion,
+      indexGestionLive: indexGestionLive,
+      listMontantUniverselle: listMontantUniverselle,
+      listGestionMensuel: listGestionMensuel,
+    );
+  }
+
+  Future<void> echeanceNoPasseMontanUnive({
+    required String idGestionMensMontantUnv,
+    required int indexGestion,
+    required int indexGestionLive,
+    required List<GestionMensuel> listGestionMensuel,
+    required List<MontantUniverselle> listMontantUniverselle,
+  }) async {
+    await echeanceNoPasseMontanUniveUseCase.execute(
+      idGestionMensMontantUnv: idGestionMensMontantUnv,
+      indexGestion: indexGestion,
+      indexGestionLive: indexGestionLive,
+      listMontantUniverselle: listMontantUniverselle,
+      listGestionMensuel: listGestionMensuel,
+    );
+  }
+
+  Future<void> changePrix({
+    required String montant,
+    required int indexGestion,
+    required List<MontantUniverselle> listMontantUniverselle,
+  }) async {
+    await changePrixUseCase.execute(
+      montant: montant,
+      indexGestion: indexGestion,
+      listMontantUniverselle: listMontantUniverselle,
+    );
+  }
+
+  Future<void> changeTitre({
+    required String nom,
+    required int indexGestion,
+    required List<MontantUniverselle> listMontantUniverselle,
+  }) async {
+    await changeTitreUseCase.execute(
+      nom: nom,
+      indexGestion: indexGestion,
+      listMontantUniverselle: listMontantUniverselle,
+    );
+  }
+
+  Future<void> changeIcons({
+    required int icons,
+    required int indexGestion,
+    required List<MontantUniverselle> listMontantUniverselle,
+  }) async {
+    await changeIconsUseCase.execute(
+      icons: icons,
+      indexGestion: indexGestion,
+      listMontantUniverselle: listMontantUniverselle,
+    );
+  }
+
+   Future<void> toggleActiveMontantUniverselle({
+    required int index,
+    required List<MontantUniverselle> listMontantUniverselle,
+  }) async {
+    await toggleActiveMontantUniverselleUseCase.execute(
+      index: index,
       listMontantUniverselle: listMontantUniverselle,
     );
   }

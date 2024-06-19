@@ -10,6 +10,7 @@ import 'package:easyeconomy/useCases/gestionMensuelUsecase/add_gestion_mensuel_m
 import 'package:easyeconomy/useCases/gestionMensuelUsecase/calculate_total_achat_usecase.dart';
 import 'package:easyeconomy/useCases/gestionMensuelUsecase/calculate_total_prevision_usecase.dart';
 import 'package:easyeconomy/useCases/gestionMensuelUsecase/add_montant_gestion_usecase.dart';
+import 'package:easyeconomy/useCases/gestionMensuelUsecase/gestionMensuelUsecase/toggle_active_gestion_mensuel_usecase.dart';
 import 'package:easyeconomy/useCases/gestionMensuelUsecase/load_gestion_mensuel_usecase.dart';
 import 'package:easyeconomy/useCases/gestionMensuelUsecase/remove_gestion_description_gestion_usecase.dart';
 import 'package:easyeconomy/useCases/gestionMensuelUsecase/remove_gestion_mensuel_usecase.dart';
@@ -23,6 +24,10 @@ import 'package:easyeconomy/useCases/gestionMensuelUsecase/update_montant_previs
 
 import 'package:injectable/injectable.dart';
 
+import '../useCases/gestionMensuelUsecase/change_icons_gestion_mensuel_usecase.dart';
+import '../useCases/gestionMensuelUsecase/change_prix_gestion_mensuel_usecase.dart';
+import '../useCases/gestionMensuelUsecase/change_titre_gestion_mensuel_usecase.dart';
+
 @singleton
 class ListGestionMensuelController {
   final GestionMensuelGetDataSharedpreferencies
@@ -35,10 +40,13 @@ class ListGestionMensuelController {
       addGestionMensuelMontantUnivLiveUseCase;
   final LoadGestionMensuelUseCase loadGestionMensuelUseCase;
   final SaveDescriptionGestionUseCase saveDescriptionGestionUseCase;
+  final ChangeIconsGestionMensuelUseCase changeIconsGestionMensuelUseCase;
   final RemoveGestionMensuelUseCase removeGestionMensuelUseCase;
   final SaveGestionMensuelUseCase saveUseCase;
+  final ChangeTitreGestionMensuelUseCase changeTitreGestionMensuelUseCase;
   final UpdateMontantPrevisionUseCase updateMontantPrevisionUseCase;
   final CalculateTotalAchatUseCase calculateTotalAchatUseCase;
+  final ChangePrixGestionMensuelUseCase changePrixGestionMensuelUseCase;
   final AddDescriptionGestionUseCase addDescriptionGestionUseCase;
   final RemoveGestionMensuelleMontantUnivLiveUseCase
       removeGestionMensuelleMontantUnivLiveUseCase;
@@ -46,6 +54,7 @@ class ListGestionMensuelController {
   final CalculateTotalPrevisionUseCase calculateTotalPrevisionUseCase;
   final RemoveGestionMensuelleMontantUnivUseCase removeGestionMensuelleMontantUnivUseCase;
   final AddMontantGestionUseCase addMontantGestionUseCase;
+  final ToggleActiveGestionMensuelUseCase toggleActiveGestionMensuelUseCase;
   final SaveGestionMensuelleMontantUnivUseCase saveGestionMensuelleMontantUnivUseCase;
   final AddGestionMensuelMontantUnivUseCase addGestionMensuelMontantUnivUseCase;
   List<GestionMensuel> _listGestionMensuel = [];
@@ -65,7 +74,7 @@ class ListGestionMensuelController {
     this.addDescriptionGestionUseCase,
     this.addGestionMensuelMontantUnivUseCase,
     this.addGestionMensuelMontantUnivLiveUseCase,
-    this.removeGestionMensuelleMontantUnivLiveUseCase, this.saveDescriptionGestionUseCase, this.saveGestionMensuelleMontantUnivUseCase, this.removeGestionDescriptionGestionUseCase, this.removeGestionMensuelleMontantUnivUseCase,
+    this.removeGestionMensuelleMontantUnivLiveUseCase, this.saveDescriptionGestionUseCase, this.saveGestionMensuelleMontantUnivUseCase, this.removeGestionDescriptionGestionUseCase, this.removeGestionMensuelleMontantUnivUseCase, this.changePrixGestionMensuelUseCase, this.changeTitreGestionMensuelUseCase, this.changeIconsGestionMensuelUseCase, this.toggleActiveGestionMensuelUseCase,
   );
 
   Future<List<GestionMensuel>> loadData() async {
@@ -308,6 +317,60 @@ class ListGestionMensuelController {
       listGestionMensuel: listGestionMensuel,
     );
 
+  }
+
+  Future<void> changePrixGestionMensuel({
+    required String montant,
+    required int indexGestionMensuel,
+    required int indexGestion,
+    required List<GestionMensuel> listGestionMensuel,
+  }) async {
+    await changePrixGestionMensuelUseCase.execute(
+      montant: montant,
+      indexGestionMensuel: indexGestionMensuel,
+      indexGestion: indexGestion,
+      listGestionMensuel: listGestionMensuel,
+    );
+  }
+
+   Future<void> changeTitreGestionMensuel({
+    required String nom,
+    required int indexGestionMensuel,
+    required int indexGestion,
+    required List<GestionMensuel> listGestionMensuel,
+  }) async {
+    await changeTitreGestionMensuelUseCase.execute(
+      nom: nom,
+      indexGestionMensuel: indexGestionMensuel,
+      indexGestion: indexGestion,
+      listGestionMensuel: listGestionMensuel,
+    );
+  }
+
+    Future<void> changeIconsGestionMensuel({
+    required int icons,
+    required int indexGestionMensuel,
+    required int indexGestion,
+    required List<GestionMensuel> listGestionMensuel,
+  }) async {
+    await changeIconsGestionMensuelUseCase.execute(
+      icons: icons,
+      indexGestionMensuel: indexGestionMensuel,
+      indexGestion: indexGestion,
+      listGestionMensuel: listGestionMensuel,
+    );
+  }
+
+  Future<void> toggleActiveGestionMensuel({
+    required int indexGestionMensuel,
+    required int indexGestion,
+    required List<GestionMensuel> listGestionMensuel,
+  }) async {
+    await toggleActiveGestionMensuelUseCase.execute(
+      indexGestionMensuel: indexGestionMensuel,
+      indexGestion: indexGestion,
+      listGestionMensuel: listGestionMensuel,
+    );
   }
 
   Future<bool> saveGestionMensuelle(

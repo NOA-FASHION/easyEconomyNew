@@ -8,15 +8,23 @@ import 'package:easyeconomy/useCases/montantPrevisionUsecase/remove_montant_prev
 import 'package:easyeconomy/useCases/montantPrevisionUsecase/reset_list_montant_prevision_usecase.dart';
 
 import 'package:easyeconomy/useCases/montantPrevisionUsecase/save_montant_prevision_usecase.dart';
+import 'package:easyeconomy/useCases/montantPrevisionUsecase/toggle_active_montant_prevision_usecase.dart';
 
 import 'package:injectable/injectable.dart';
+
+import '../useCases/montantPrevisionUsecase/change_icons_simulation_usecase.dart';
+import '../useCases/montantPrevisionUsecase/change_prix_simulation_usecase.dart';
+import '../useCases/montantPrevisionUsecase/change_titre_simulation_usecase.dart';
 
 @singleton
 class ListMontantPrevisionController {
   final MontantPrevisionGetDataSharedPreferences
       montantPrevisionGetDataSharedPreferences;
-
+final ChangeTitreSimulationUseCase changeTitreSimulationUseCase;
+  final ToggleActiveMontantPrevisionUseCase toggleActiveMontantPrevisionUseCase;
+final ChangeIconsSimulationUseCase changeIconsSimulationUseCase;
   final LoadMontantPrevisionUseCase loadMontantPrevisionUseCase;
+  final ChangePrixSimulationUseCase changePrixSimulationUseCase;
   final AddMontantPrevisionUseCase addMontantPrevisionUseCase;
   final SaveMontantprevisionUseCase saveUseCase;
   final ResetListMontantPrevisionUseCase resetListMontantPrevisionUseCase;
@@ -29,7 +37,7 @@ class ListMontantPrevisionController {
     this.saveUseCase,
     this.removeMontantPrevisionUseCase,
     this.addMontantPrevisionUseCase,
-    this.resetListMontantPrevisionUseCase,
+    this.resetListMontantPrevisionUseCase, this.changePrixSimulationUseCase, this.changeTitreSimulationUseCase, this.changeIconsSimulationUseCase, this.toggleActiveMontantPrevisionUseCase,
   );
 
   Future<List<MontantUniverselle>> loadData() async {
@@ -75,14 +83,58 @@ class ListMontantPrevisionController {
   }
 
   Future<void> resetListMontantPrevision(
-      List<MontantUniverselle> listMontantUniverselle,
-      List<MontantUniverselle> listMontantPrevision) async {
+     {required List<MontantUniverselle> listMontantUniverselle,
+     required List<MontantUniverselle> listMontantPrevision} ) async {
     await resetListMontantPrevisionUseCase.execute(
       listMontantUniverselle: listMontantUniverselle,
       listMontantPrevision: listMontantPrevision,
     );
   }
 
+   Future<void> changePrixSimulation({
+    required String montant,
+    required int indexGestion,
+    required List<MontantUniverselle> listMontantPrevision,
+  }) async {
+    await changePrixSimulationUseCase.execute(
+      montant: montant,
+      indexGestion: indexGestion,
+      listMontantPrevision: listMontantPrevision,
+    );
+  }
+
+    Future<void> changeTitreSimulation({
+    required String nom,
+    required int indexGestion,
+    required List<MontantUniverselle> listMontantPrevision,
+  }) async {
+    await changeTitreSimulationUseCase.execute(
+      nom: nom,
+      indexGestion: indexGestion,
+      listMontantPrevision: listMontantPrevision,
+    );
+  }
+ Future<void> changeIconsSimulation({
+    required int icons,
+    required int indexGestion,
+    required List<MontantUniverselle> listMontantPrevision,
+  }) async {
+    await changeIconsSimulationUseCase.execute(
+      icons: icons,
+      indexGestion: indexGestion,
+      listMontantPrevision: listMontantPrevision,
+    );
+  }
+
+   Future<void> toggleActiveMontantPrevision({
+    required int index,
+    required List<MontantUniverselle> listMontantPrevision,
+  }) async {
+    await toggleActiveMontantPrevisionUseCase.execute(
+      index: index,
+      listMontantPrevision: listMontantPrevision,
+    );
+  }
   Future<bool> saveMontantPrevision(
       List<MontantUniverselle> listMontantPrevision,
       {bool remove = false}) async {

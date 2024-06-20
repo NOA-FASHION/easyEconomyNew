@@ -6,8 +6,10 @@ import 'package:easyeconomy/controllers/list_montant_prevision_controller.dart';
 import 'package:easyeconomy/controllers/list_montant_universelle_controller.dart';
 import 'package:easyeconomy/models/easy_economy_models.dart';
 import 'package:easyeconomy/useCases/choix_desciption_details_finance_enum_usecase.dart';
+import 'package:easyeconomy/useCases/choix_desciption_upload_usecase.dart';
 import 'package:easyeconomy/useCases/choix_description_enum_usecase.dart';
 import 'package:easyeconomy/useCases/generate_gestion_mensuel_prevision_usecase.dart';
+import 'package:easyeconomy/useCases/read_content_usecase.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_document_picker/flutter_document_picker.dart';
 
@@ -31,8 +33,10 @@ const String keyAccesActivSwitch = "ChallengeyesterDay";
 class EasyController extends ChangeNotifier {
   final ListGestionMensuelController listGestionMensuelController;
   final SharedPreferences _localData;
+  final ReadContentUseCase readContentUseCase;
   final ListMontantUniverselleController listMontantUniverselleController;
   final ListMontantPrevisionController listMontantPrevisionController;
+  final ChoixDesciptionUploadUseCase choixDesciptionUploadUseCase;
   final GenerateGestionMensuelPrevisionUseCase
       generateGestionMensuelPrevisionUseCase;
 
@@ -70,22 +74,19 @@ class EasyController extends ChangeNotifier {
     this.choixDesciptionEnumUseCase,
     this.listMontantPrevisionController,
     this.generateGestionMensuelPrevisionUseCase,
+    this.readContentUseCase,
+    this.choixDesciptionUploadUseCase,
   ) {
     _initEconomy();
   }
 
   void _initEconomy() async {
-
     _localDataEcononyDays = await SharedPreferences.getInstance();
-
-    
 
     _listGestionMensuel = await listGestionMensuelController.loadData();
 
-   
     _listMontantUniverselle = await listMontantUniverselleController.loadData();
 
-    
     _listMontantPrevision = await listMontantPrevisionController.loadData();
     _initChallengeListStartChallenge().then((value) => startChallenyesterday());
     _initEconomyDays();
@@ -146,7 +147,6 @@ class EasyController extends ChangeNotifier {
     return montanUniverselle;
   }
 
-
   Future<void> addDescriptionMontaUniv({
     required List<double> achat,
     required double previsions,
@@ -182,7 +182,6 @@ class EasyController extends ChangeNotifier {
     }
   }
 
-
   Future<void> removeDescriptionMontaUniv({
     required int index,
     required int indexChargeFixe,
@@ -202,11 +201,8 @@ class EasyController extends ChangeNotifier {
     }
   }
 
-  
-
   achatTotals(String idGestionMensMontantUnv, int indexGestion,
       int indexGestionLive, int indexgestiondescription) async {
-
     await listGestionMensuelController.addAchatTotal(
       indexGestion: indexGestion,
       indexGestionLive: indexGestionLive,
@@ -289,12 +285,11 @@ class EasyController extends ChangeNotifier {
     notifyListeners();
   }
 
-
-
   void resetListMontantPrevision() async {
     _listMontantPrevision = [];
     listMontantPrevisionController.resetListMontantPrevision(
-       listMontantPrevision: _listMontantPrevision,listMontantUniverselle: _listMontantUniverselle);
+        listMontantPrevision: _listMontantPrevision,
+        listMontantUniverselle: _listMontantUniverselle);
     notifyListeners();
   }
 
@@ -322,7 +317,6 @@ class EasyController extends ChangeNotifier {
       print('Error in removeMontantPrevision: $e');
     }
   }
-
 
   void addMontanUniverselle({
     required int icones,
@@ -360,8 +354,6 @@ class EasyController extends ChangeNotifier {
     // _initEconomy();
     notifyListeners();
   }
-
-
 
   void addMontantPrevision({
     required int icones,
@@ -436,7 +428,6 @@ class EasyController extends ChangeNotifier {
     starteconomyDays();
   }
 
- 
   void addGestionMensuelMontantUniv(
       {required int icones,
       required String nom,
@@ -456,7 +447,6 @@ class EasyController extends ChangeNotifier {
     _initEconomyDays();
     notifyListeners();
   }
-
 
   void addGestionMensuelMontantUnivLive(
       {required int icones,
@@ -479,8 +469,6 @@ class EasyController extends ChangeNotifier {
     notifyListeners();
   }
 
-  
-
   Future<void> removeGestionMensuelle({
     required int index,
   }) async {
@@ -491,7 +479,6 @@ class EasyController extends ChangeNotifier {
     // _initEconomy();
     notifyListeners();
   }
-
 
   void removeGestionMensuelleMontantUnivLive(
       {required bool validation,
@@ -514,7 +501,6 @@ class EasyController extends ChangeNotifier {
     notifyListeners();
   }
 
-  
   void removeGestionDescriptionGestion(
       {required int index,
       required int indexGestionMensuel,
@@ -546,7 +532,7 @@ class EasyController extends ChangeNotifier {
 
     notifyListeners();
   }
- 
+
   echeancePasseMontanUnive(String idGestionMensMontantUnv, int indexGestion,
       int indexGestionLive) async {
     await listMontantUniverselleController.echeancePasseMontanUnive(
@@ -560,8 +546,7 @@ class EasyController extends ChangeNotifier {
     notifyListeners();
   }
 
-
-    echeanceNoPasseMontanUnive(String idGestionMensMontantUnv, int indexGestion,
+  echeanceNoPasseMontanUnive(String idGestionMensMontantUnv, int indexGestion,
       int indexGestionLive) async {
     await listMontantUniverselleController.echeanceNoPasseMontanUnive(
       idGestionMensMontantUnv: idGestionMensMontantUnv,
@@ -570,12 +555,11 @@ class EasyController extends ChangeNotifier {
       listMontantUniverselle: _listMontantUniverselle,
       listGestionMensuel: _listGestionMensuel,
     );
-    
+
     notifyListeners();
   }
 
-
-    void changePrix({
+  void changePrix({
     required String montant,
     required int indexGestion,
   }) async {
@@ -587,8 +571,7 @@ class EasyController extends ChangeNotifier {
     notifyListeners();
   }
 
- 
-    void changeTitre({
+  void changeTitre({
     required String nom,
     required int indexGestion,
   }) async {
@@ -600,7 +583,7 @@ class EasyController extends ChangeNotifier {
     notifyListeners();
   }
 
-    void changeIcons({
+  void changeIcons({
     required int icons,
     required int indexGestion,
   }) async {
@@ -612,9 +595,7 @@ class EasyController extends ChangeNotifier {
     notifyListeners();
   }
 
-
-
-    void changePrixSimulation({
+  void changePrixSimulation({
     required String montant,
     required int indexGestion,
   }) async {
@@ -626,7 +607,7 @@ class EasyController extends ChangeNotifier {
     notifyListeners();
   }
 
- void changeTitreSimulation({
+  void changeTitreSimulation({
     required String nom,
     required int indexGestion,
   }) async {
@@ -638,8 +619,7 @@ class EasyController extends ChangeNotifier {
     notifyListeners();
   }
 
-
-    void changeIconsSimulation({
+  void changeIconsSimulation({
     required int icons,
     required int indexGestion,
   }) async {
@@ -650,7 +630,6 @@ class EasyController extends ChangeNotifier {
     );
     notifyListeners();
   }
-
 
   void changePrixGestionMensuel({
     required String montant,
@@ -666,8 +645,7 @@ class EasyController extends ChangeNotifier {
     notifyListeners();
   }
 
- 
-    void changeTitreGestionMensuel({
+  void changeTitreGestionMensuel({
     required String nom,
     required int indexGestionMensuel,
     required int indexGestion,
@@ -682,7 +660,7 @@ class EasyController extends ChangeNotifier {
     notifyListeners();
   }
 
-    void changeIconsGestionMensuel({
+  void changeIconsGestionMensuel({
     required int icons,
     required int indexGestionMensuel,
     required int indexGestion,
@@ -696,7 +674,6 @@ class EasyController extends ChangeNotifier {
     notifyListeners();
   }
 
-
   activeListListMontantUniverselle({required int index}) async {
     await listMontantUniverselleController.toggleActiveMontantUniverselle(
       index: index,
@@ -704,8 +681,6 @@ class EasyController extends ChangeNotifier {
     );
     notifyListeners();
   }
-
-
 
   activeListListMontantPrevision({required int index}) async {
     await listMontantPrevisionController.toggleActiveMontantPrevision(
@@ -715,46 +690,22 @@ class EasyController extends ChangeNotifier {
     notifyListeners();
   }
 
-  
-
-    activeListListGestionMensuel(
+  activeListListGestionMensuel(
       {required int indexGestionMensuel, required int indexGestion}) async {
-    if (_listGestionMensuel[indexGestionMensuel]
-            .montantUniverselle[indexGestion]
-            .previsionsTotal ==
-        0) {
-      _listGestionMensuel[indexGestionMensuel]
-          .montantUniverselle[indexGestion]
-          .previsionsTotal = 1;
-    } else {
-      _listGestionMensuel[indexGestionMensuel]
-          .montantUniverselle[indexGestion]
-          .previsionsTotal = 0;
-    }
-    // await _saveGestionMensuelle();
-    await listGestionMensuelController.saveGestionMensuelle(
-        listGestionMensuel: _listGestionMensuel);
-    _initEconomy();
-    notifyListeners();
-  }
+    await listGestionMensuelController.toggleActiveGestionMensuel(
+      indexGestionMensuel: indexGestionMensuel,
+      indexGestion: indexGestion,
+      listGestionMensuel: _listGestionMensuel,
+    );
 
-  Future<String> readContent() async {
-    String contents = "";
-    try {
-      final path = await FlutterDocumentPicker.openDocument();
-      final file = File(path!);
-      contents = await file.readAsString();
-      return contents;
-    } catch (e) {
-      return 'Error!';
-    }
+    notifyListeners();
   }
 
   void uploadChallenge() async {
     UploadMontantniversell uploadFileChallenge =
         UploadMontantniversell(montantUniverselle: []);
     Map<String, dynamic> _jsonDecodeuploadFile;
-    String uploadFile = await readContent();
+    String uploadFile = await readContentUseCase.execute();
     if (uploadFile.isNotEmpty) {
       _jsonDecodeuploadFile = jsonDecode(uploadFile);
       uploadFileChallenge =
@@ -767,35 +718,14 @@ class EasyController extends ChangeNotifier {
             id: uploadFileChallenge.montantUniverselle[i].id,
             montant: uploadFileChallenge.montantUniverselle[i].montant,
             nom: uploadFileChallenge.montantUniverselle[i].nom,
-            unity: choixDesciptionEnum2(
-                uploadFileChallenge.montantUniverselle[i].unity),
+            unity: choixDesciptionUploadUseCase
+                .execute(uploadFileChallenge.montantUniverselle[i].unity),
             icones: uploadFileChallenge.montantUniverselle[i].icones);
       }
     }
   }
 
-  String choixDesciptionEnum2(unity_Montant_universelle json) {
-    String unity = "ChargeFixe";
-
-    if (json == unity_Montant_universelle.ChargeFixe) {
-      unity = "ChargeFixe";
-      return unity;
-    } else if (json == unity_Montant_universelle.RevenuFixe) {
-      unity = "RevenuFixe";
-      return unity;
-    } else if (json == unity_Montant_universelle.depensePonctuelle) {
-      unity = "depensePonctuelle";
-      return unity;
-    } else if (json == unity_Montant_universelle.RevenuPonctuel) {
-      unity = "RevenuPonctuel";
-      return unity;
-    }
-    return unity;
-  }
-
   void addMontanUniverselleUpload() async {
-    // uploadFileChallenge.montantUniverselle = _listMontantUniverselle;
-    // await delay(1500);
     for (var i = _listMontantUniverselle.length - 1; i >= 0; i--) {
       uploadFileChallenge.montantUniverselle.add(
         MontantUniverselle(
@@ -846,8 +776,6 @@ class EasyController extends ChangeNotifier {
     Map mapyesterday = activSwitch.toJson();
     String _jsonyesterday = jsonEncode(mapyesterday);
     return _localData.setString(keyAccesActivSwitch, _jsonyesterday);
-
-    return false;
   }
 
   void switchTrueIntro(bool active) async {
@@ -856,14 +784,11 @@ class EasyController extends ChangeNotifier {
     } else {
       activSwitch.active = "false";
     }
-
     await _saveChallenyesterday();
-    // _initChallengeListStartChallenge();
+  
   }
 
   void initChallengeyesterday() async {
-    // getBoolActivation();
-    // await modifDtabaseFirebase();
     DateTime today = new DateTime.now();
     DateTime lastDay =
         DateFormat('EEEE, d MMM, yyyy').parseStrict(activSwitch.date);
@@ -872,7 +797,6 @@ class EasyController extends ChangeNotifier {
       if (activSwitch.firstActive == "true") {
         activSwitch.firstActive = "false";
         activSwitch.active = "false";
-        // print("initChallengeyesterday");
         await _saveChallenyesterday();
         _initChallengeListStartChallenge();
       }
@@ -889,8 +813,6 @@ class EasyController extends ChangeNotifier {
       activSwitch.switchIintro = "true";
       activSwitch.active = "true";
       activSwitch.nbtacheVallide = "";
-      // await initialiseConnectionDatabase();
-      // print("startChallenyesterday");
       await _saveChallenyesterday();
       _initChallengeListStartChallenge();
     }
@@ -906,11 +828,6 @@ class EasyController extends ChangeNotifier {
       _jsonDecodeListActivSwitch = jsonDecode(_tempListActivSwitch);
       activSwitch = ActivSwitch.fromJSON(_jsonDecodeListActivSwitch);
     }
-    // print("_initChallengeListStartChallenge");
-    // startChallenyesterday();
-    // initChallengeyesterday();
-
-    // notifyListeners();
   }
 
   switchIntro(String switchBoll) async {

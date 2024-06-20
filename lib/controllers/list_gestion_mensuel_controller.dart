@@ -10,7 +10,7 @@ import 'package:easyeconomy/useCases/gestionMensuelUsecase/add_gestion_mensuel_m
 import 'package:easyeconomy/useCases/gestionMensuelUsecase/calculate_total_achat_usecase.dart';
 import 'package:easyeconomy/useCases/gestionMensuelUsecase/calculate_total_prevision_usecase.dart';
 import 'package:easyeconomy/useCases/gestionMensuelUsecase/add_montant_gestion_usecase.dart';
-import 'package:easyeconomy/useCases/gestionMensuelUsecase/gestionMensuelUsecase/toggle_active_gestion_mensuel_usecase.dart';
+import 'package:easyeconomy/useCases/gestionMensuelUsecase/toggle_active_gestion_mensuel_usecase.dart';
 import 'package:easyeconomy/useCases/gestionMensuelUsecase/load_gestion_mensuel_usecase.dart';
 import 'package:easyeconomy/useCases/gestionMensuelUsecase/remove_gestion_description_gestion_usecase.dart';
 import 'package:easyeconomy/useCases/gestionMensuelUsecase/remove_gestion_mensuel_usecase.dart';

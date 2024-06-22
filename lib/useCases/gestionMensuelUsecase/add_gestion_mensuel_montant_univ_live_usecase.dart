@@ -25,6 +25,7 @@ class AddGestionMensuelMontantUnivLiveUseCase {
     required int index,
     required List<GestionMensuel> listGestionMensuel,
   }) async {
+     try {
     listGestionMensuel[index].montantUniverselleLive.add(MontantUniverselle(
         unity: choixDesciptionDetailsFinanceEnumUseCase.execute(unity),
         id: id,
@@ -35,5 +36,9 @@ class AddGestionMensuelMontantUnivLiveUseCase {
         previsionsTotal: 0,
         icones: icones));
     await saveGestionMensuelUseCase.execute(listGestionMensuel, remove: false);
+  }
+  catch (e) {
+    print(e);
+  }
   }
 }

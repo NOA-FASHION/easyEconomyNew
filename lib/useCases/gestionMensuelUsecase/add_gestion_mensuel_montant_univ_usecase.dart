@@ -7,7 +7,8 @@ import 'save_gestion_mensuel_usecase.dart';
 @injectable
 class AddGestionMensuelMontantUnivUseCase {
   final SaveGestionMensuelUseCase saveGestionMensuelUseCase;
-  final ChoixDesciptionDetailsFinanceEnumUseCase choixDesciptionDetailsFinanceEnumUseCase;
+  final ChoixDesciptionDetailsFinanceEnumUseCase
+      choixDesciptionDetailsFinanceEnumUseCase;
 
   AddGestionMensuelMontantUnivUseCase(
     this.saveGestionMensuelUseCase,
@@ -23,15 +24,20 @@ class AddGestionMensuelMontantUnivUseCase {
     required int index,
     required List<GestionMensuel> listGestionMensuel,
   }) async {
-    listGestionMensuel[index].montantUniverselle.add(MontantUniverselle(
-        unity: choixDesciptionDetailsFinanceEnumUseCase.execute(unity),
-        id: id,
-        montant: montant,
-        nom: nom,
-        descriptionUniverselle: [],
-        achat: [],
-        previsionsTotal: 0,
-        icones: icones));
-    await saveGestionMensuelUseCase.execute(listGestionMensuel, remove: false);
+    try {
+      listGestionMensuel[index].montantUniverselle.add(MontantUniverselle(
+          unity: choixDesciptionDetailsFinanceEnumUseCase.execute(unity),
+          id: id,
+          montant: montant,
+          nom: nom,
+          descriptionUniverselle: [],
+          achat: [],
+          previsionsTotal: 0,
+          icones: icones));
+      await saveGestionMensuelUseCase.execute(listGestionMensuel,
+          remove: false);
+    } catch (e) {
+      print(e);
+    }
   }
 }

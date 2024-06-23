@@ -1,4 +1,5 @@
-import 'package:easyeconomy/useCases/gestionMensuelUsecase/gestionMensuelUsecase/toggle_active_gestion_mensuel_usecase.dart';
+
+import 'package:easyeconomy/useCases/gestionMensuelUsecase/toggle_active_gestion_mensuel_usecase.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:flutter_test/flutter_test.dart';
 

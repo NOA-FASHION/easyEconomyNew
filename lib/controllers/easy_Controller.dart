@@ -146,7 +146,9 @@ class EasyController extends ChangeNotifier {
 
     return montanUniverselle;
   }
-
+  void loadData()  {
+     _initEconomy();
+  }
   Future<void> addDescriptionMontaUniv({
     required List<double> achat,
     required double previsions,

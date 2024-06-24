@@ -540,7 +540,7 @@ class _ActiveGlowWidget2State extends State<ActiveGlowWidget2> {
                 Column(
                   children: [
                     Container(
-                      width: MediaQuery.of(context).size.width / 1.72,
+                      width: MediaQuery.of(context).size.width / 1.90,
                       height: 25.0,
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -554,7 +554,7 @@ class _ActiveGlowWidget2State extends State<ActiveGlowWidget2> {
                       ),
                     ),
                     Container(
-                      width: MediaQuery.of(context).size.width / 1.72,
+                      width: MediaQuery.of(context).size.width / 1.90,
                       height: 30.0,
                       child: Row(
                         children: [
